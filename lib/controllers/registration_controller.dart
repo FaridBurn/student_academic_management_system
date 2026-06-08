@@ -1,0 +1,210 @@
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../models/subject.dart';
+import '../models/student.dart';
+
+class RegistrationController extends ChangeNotifier {
+  final SupabaseClient _supabase = Supabase.instance.client;
+  
+  List<Subject> _subjects = [];
+  List<Subject> _filteredSubjects = [];
+  List<Subject> _cartItems = [];
+  bool _isLoading = false;
+  Student? _currentStudent;
+
+  List<Subject> get filteredSubjects => _filteredSubjects;
+  List<Subject> get cartItems => _cartItems;
+  bool get isLoading => _isLoading;
+  Student? get currentStudent => _currentStudent;
+  int get totalCartCredits => _cartItems.fold(0, (sum, item) => sum + item.credit_hours);
+
+  // LOGIN
+  Future<bool> loginUser(String email, String password) async {
+    _isLoading = true;
+    notifyListeners();
+    
+  try {
+    print('Login attempt: email=$email, password=$password');
+    
+    final response = await _supabase
+        .from('students')
+        .select()
+        .eq('stu_email', email)
+        .eq('stu_password', password)
+        .maybeSingle();
+
+    print('Response from Supabase: $response');
+
+    if (response != null) {
+      _currentStudent = Student.fromJson(response);
+      print('Student found: ${_currentStudent!.stu_name}');
+      // ... rest
+    } else {
+      print('No student found with these credentials');
+    }
+  } catch (e) {
+    print('Error during login: $e');
+  }
+  
+    try {
+      final response = await _supabase
+          .from('students')
+          .select()
+          .eq('stu_email', email)
+          .eq('stu_password', password)
+          .maybeSingle();
+
+      if (response != null) {
+        _currentStudent = Student.fromJson(response);
+        
+        if (_currentStudent!.stu_blocked) {
+          _isLoading = false;
+          notifyListeners();
+          return false;
+        }
+        
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      }
+      
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // FETCH ALL SUBJECTS
+  Future<void> fetchSubjects() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _supabase
+          .from('subjects')
+          .select()
+          .order('sub_code');
+      
+      _subjects = (response as List)
+          .map((json) => Subject.fromJson(json))
+          .toList();
+      
+      _filteredSubjects = List.from(_subjects);
+    } catch (e) {
+      debugPrint('Error fetching subjects: $e');
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  // FILTER SUBJECTS
+  void filterSubjects(String query) {
+    if (query.isEmpty) {
+      _filteredSubjects = List.from(_subjects);
+    } else {
+      _filteredSubjects = _subjects.where((subject) {
+        return subject.sub_code.toLowerCase().contains(query.toLowerCase()) ||
+               subject.sub_name.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    }
+    notifyListeners();
+  }
+
+  // ADD TO CART (with validation)
+  Future<bool> addToCart(Subject subject) async {
+    // Check if already in cart
+    if (_cartItems.any((item) => item.subjectID == subject.subjectID)) {
+      return false;
+    }
+    
+    // Check credit limit (max 20)
+    if (totalCartCredits + subject.credit_hours > 20) {
+      return false;
+    }
+    
+    _cartItems.add(subject);
+    notifyListeners();
+    return true;
+  }
+
+  // REMOVE FROM CART
+  void removeFromCart(Subject subject) {
+    _cartItems.removeWhere((item) => item.subjectID == subject.subjectID);
+    notifyListeners();
+  }
+
+  // CLEAR CART
+  void clearCart() {
+    _cartItems.clear();
+    notifyListeners();
+  }
+
+  // SUBMIT REGISTRATION
+  Future<bool> submitRegistration(String semester, String academicYear) async {
+    if (_currentStudent == null || _cartItems.isEmpty) return false;
+    
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      for (var subject in _cartItems) {
+        await _supabase.from('registrations').insert({
+          'studentID': _currentStudent!.studentID,
+          'subjectID': subject.subjectID,
+          'semester': semester,
+          'academic_year': academicYear,
+          'status': 'Pending',
+          'registered_at': DateTime.now().toIso8601String(),
+        });
+      }
+      
+      _cartItems.clear();
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      debugPrint('Error submitting registration: $e');
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // FETCH TIMETABLE
+  Future<List<Map<String, dynamic>>> fetchTimetable(String semester, String academicYear) async {
+    if (_currentStudent == null) return [];
+    
+    try {
+      final response = await _supabase
+          .from('registrations')
+          .select('''
+            registrationID,
+            status,
+            subjects:subjectID (subjectID, sub_code, sub_name, credit_hours)
+          ''')
+          .eq('studentID', _currentStudent!.studentID)
+          .eq('semester', semester)
+          .eq('academic_year', academicYear)
+          .eq('status', 'Approved');
+      
+      return response as List<Map<String, dynamic>>;
+    } catch (e) {
+      debugPrint('Error fetching timetable: $e');
+      return [];
+    }
+  }
+  
+  // LOGOUT
+  void logout() {
+    _currentStudent = null;
+    _subjects = [];
+    _filteredSubjects = [];
+    _cartItems = [];
+    notifyListeners();
+  }
+}
