@@ -1,6 +1,6 @@
 {
-    "name": "sams_app",
-    "short_name": "sams_app",
+    "name": "student_academic_management_system",
+    "short_name": "student_academic_management_system",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

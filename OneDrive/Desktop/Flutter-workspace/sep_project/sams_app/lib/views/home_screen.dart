@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'student_home.dart';
-import 'lecturer_home.dart';
-import 'admin_home.dart';
-import 'treasury_home.dart';
-import 'pusatadab_home.dart';
+import 'student_dashboard.dart';
+import 'lecturer_dashboard.dart';
+import 'registrar_dashboard.dart';
+import 'treasury_dashboard.dart';
+import 'pusatadab_dashboard.dart';
 
 class HomeScreen extends StatelessWidget {
   final String role;
