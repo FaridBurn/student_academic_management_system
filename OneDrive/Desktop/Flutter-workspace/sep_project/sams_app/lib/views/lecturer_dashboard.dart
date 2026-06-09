@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'login_screen.dart';
+import 'login_page.dart';
 
-class AdminHome extends StatelessWidget {
+class LecturerHome extends StatelessWidget {
   final String name;
-  const AdminHome({super.key, required this.name});
-  static const color = Color(0xFF6A1B9A);
+  const LecturerHome({super.key, required this.name});
+  static const color = Color(0xFF2E7D32);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F0FF),
+      backgroundColor: const Color(0xFFF1F8F1),
       body: SafeArea(
         child: Column(
           children: [
@@ -32,7 +32,7 @@ class AdminHome extends StatelessWidget {
                         style: TextStyle(color: Colors.white70, fontSize: 13)),
                     Text(name, style: const TextStyle(
                         color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                    const Text('Faculty Registrar',
+                    const Text('Lecturer',
                         style: TextStyle(color: Colors.white60, fontSize: 12)),
                   ]),
                   IconButton(
@@ -54,12 +54,11 @@ class AdminHome extends StatelessWidget {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   children: [
-                    _menuCard(Icons.app_registration, 'Open\nRegistration',  const Color(0xFF7B1FA2)),
-                    _menuCard(Icons.people,            'All\nStudents',       const Color(0xFF6A1B9A)),
-                    _menuCard(Icons.book,              'Manage\nSubjects',    const Color(0xFF4527A0)),
-                    _menuCard(Icons.payment,           'Fee\nManagement',     const Color(0xFFC62828)),
-                    _menuCard(Icons.bar_chart,         'Reports',             const Color(0xFF00695C)),
-                    _menuCard(Icons.settings,          'System\nSettings',    const Color(0xFF37474F)),
+                    _menuCard(Icons.qr_code,           'Generate\nAttendance Code', const Color(0xFF388E3C)),
+                    _menuCard(Icons.people,             'My\nStudents',              const Color(0xFF00796B)),
+                    _menuCard(Icons.bar_chart,          'Attendance\nReport',        const Color(0xFF0288D1)),
+                    _menuCard(Icons.book,               'My\nSubjects',              const Color(0xFF558B2F)),
+                    _menuCard(Icons.person,             'My\nProfile',               const Color(0xFF5E35B1)),
                   ],
                 ),
               ),

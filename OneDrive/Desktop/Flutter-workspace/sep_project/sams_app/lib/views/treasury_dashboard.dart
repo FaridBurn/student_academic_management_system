@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'login_screen.dart';
+import 'login_page.dart';
 
-class PusatAdabHome extends StatelessWidget {
+class TreasuryHome extends StatelessWidget {
   final String name;
-  const PusatAdabHome({super.key, required this.name});
-  static const color = Color(0xFF00838F);
+  const TreasuryHome({super.key, required this.name});
+  static const color = Color(0xFFE65100);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE0F7FA),
+      backgroundColor: const Color(0xFFFFF3E0),
       body: SafeArea(
         child: Column(
           children: [
@@ -23,12 +23,12 @@ class PusatAdabHome extends StatelessWidget {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   children: [
-                    _menuCard(Icons.emoji_events,     'Curriculum\nActivities',  Color(0xFF00838F)),
-                    _menuCard(Icons.check_circle,     'Approve\nClaims',         Color(0xFF00695C)),
-                    _menuCard(Icons.people,           'Student\nCredits',        Color(0xFF1565C0)),
-                    _menuCard(Icons.bar_chart,        'Activity\nReport',        Color(0xFF558B2F)),
-                    _menuCard(Icons.add_box,          'Add\nActivity',           Color(0xFF6A1B9A)),
-                    _menuCard(Icons.person,           'My\nProfile',             Color(0xFF37474F)),
+                    _menuCard(Icons.receipt_long,    'Fee\nRecords',        Color(0xFFEF6C00)),
+                    _menuCard(Icons.notifications,   'Send\nReminders',     Color(0xFFF57C00)),
+                    _menuCard(Icons.block,            'Blocked\nStudents',   Color(0xFFC62828)),
+                    _menuCard(Icons.bar_chart,        'Payment\nReport',     Color(0xFF2E7D32)),
+                    _menuCard(Icons.price_check,      'Verify\nPayments',    Color(0xFF00838F)),
+                    _menuCard(Icons.person,           'My\nProfile',         Color(0xFF5E35B1)),
                   ],
                 ),
               ),
@@ -58,7 +58,7 @@ class PusatAdabHome extends StatelessWidget {
                 style: TextStyle(color: Colors.white70, fontSize: 13)),
             Text(name, style: const TextStyle(
                 color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-            const Text('Pusat Adab',
+            const Text('Student Treasury',
                 style: TextStyle(color: Colors.white60, fontSize: 12)),
           ]),
           IconButton(

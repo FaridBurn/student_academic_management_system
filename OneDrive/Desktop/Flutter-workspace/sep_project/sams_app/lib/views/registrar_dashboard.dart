@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'login_screen.dart';
+import 'login_page.dart';
 
-class StudentHome extends StatelessWidget {
+class AdminHome extends StatelessWidget {
   final String name;
-  const StudentHome({super.key, required this.name});
-  static const color = Color(0xFF1565C0);
+  const AdminHome({super.key, required this.name});
+  static const color = Color(0xFF6A1B9A);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F4FF),
+      backgroundColor: const Color(0xFFF5F0FF),
       body: SafeArea(
         child: Column(
           children: [
@@ -32,7 +32,7 @@ class StudentHome extends StatelessWidget {
                         style: TextStyle(color: Colors.white70, fontSize: 13)),
                     Text(name, style: const TextStyle(
                         color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                    const Text('Student',
+                    const Text('Faculty Registrar',
                         style: TextStyle(color: Colors.white60, fontSize: 12)),
                   ]),
                   IconButton(
@@ -54,12 +54,12 @@ class StudentHome extends StatelessWidget {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   children: [
-                    _menuCard(Icons.app_registration, 'Subject\nRegistration', const Color(0xFF1976D2)),
-                    _menuCard(Icons.qr_code_scanner,  'Check\nAttendance',     const Color(0xFF0288D1)),
-                    _menuCard(Icons.sports,            'Curriculum\nActivities',const Color(0xFF0097A7)),
-                    _menuCard(Icons.payment,           'Tuition\nFees',         const Color(0xFFD32F2F)),
-                    _menuCard(Icons.book,              'My\nSubjects',          const Color(0xFF388E3C)),
-                    _menuCard(Icons.person,            'My\nProfile',           const Color(0xFF5E35B1)),
+                    _menuCard(Icons.app_registration, 'Open\nRegistration',  const Color(0xFF7B1FA2)),
+                    _menuCard(Icons.people,            'All\nStudents',       const Color(0xFF6A1B9A)),
+                    _menuCard(Icons.book,              'Manage\nSubjects',    const Color(0xFF4527A0)),
+                    _menuCard(Icons.payment,           'Fee\nManagement',     const Color(0xFFC62828)),
+                    _menuCard(Icons.bar_chart,         'Reports',             const Color(0xFF00695C)),
+                    _menuCard(Icons.settings,          'System\nSettings',    const Color(0xFF37474F)),
                   ],
                 ),
               ),

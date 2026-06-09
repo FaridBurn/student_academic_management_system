@@ -1,4 +1,4 @@
-# sams_app
+# student_academic_management_system
 
 A new Flutter project.
 

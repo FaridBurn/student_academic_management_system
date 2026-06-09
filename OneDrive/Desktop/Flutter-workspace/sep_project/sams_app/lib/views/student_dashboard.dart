@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'login_screen.dart';
+import 'login_page.dart';
+import 'manage_curriculum_activities/available_activities.dart';
 
-class LecturerHome extends StatelessWidget {
+class StudentHome extends StatelessWidget {
   final String name;
-  const LecturerHome({super.key, required this.name});
-  static const color = Color(0xFF2E7D32);
+  const StudentHome({super.key, required this.name});
+  static const color = Color(0xFF1565C0);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF1F8F1),
+      backgroundColor: const Color(0xFFF0F4FF),
       body: SafeArea(
         child: Column(
           children: [
@@ -32,7 +33,7 @@ class LecturerHome extends StatelessWidget {
                         style: TextStyle(color: Colors.white70, fontSize: 13)),
                     Text(name, style: const TextStyle(
                         color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                    const Text('Lecturer',
+                    const Text('Student',
                         style: TextStyle(color: Colors.white60, fontSize: 12)),
                   ]),
                   IconButton(
@@ -54,11 +55,18 @@ class LecturerHome extends StatelessWidget {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   children: [
-                    _menuCard(Icons.qr_code,           'Generate\nAttendance Code', const Color(0xFF388E3C)),
-                    _menuCard(Icons.people,             'My\nStudents',              const Color(0xFF00796B)),
-                    _menuCard(Icons.bar_chart,          'Attendance\nReport',        const Color(0xFF0288D1)),
-                    _menuCard(Icons.book,               'My\nSubjects',              const Color(0xFF558B2F)),
-                    _menuCard(Icons.person,             'My\nProfile',               const Color(0xFF5E35B1)),
+                    _menuCard(context, Icons.app_registration, 'Subject\nRegistration', const Color(0xFF1976D2), null),
+                    _menuCard(context, Icons.qr_code_scanner,  'Check\nAttendance',     const Color(0xFF0288D1), null),
+                    _menuCard(context, Icons.sports,           'Curriculum\nActivities', const Color(0xFF0097A7),
+                        () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => CurriculumHomeScreen(name: name), // 👈 pass name here
+                              ),
+                            )),
+                    _menuCard(context, Icons.payment,          'Tuition\nFees',          const Color(0xFFD32F2F), null),
+                    _menuCard(context, Icons.book,             'My\nSubjects',            const Color(0xFF388E3C), null),
+                    _menuCard(context, Icons.person,           'My\nProfile',             const Color(0xFF5E35B1), null),
                   ],
                 ),
               ),
@@ -69,14 +77,14 @@ class LecturerHome extends StatelessWidget {
     );
   }
 
-  Widget _menuCard(IconData icon, String label, Color cardColor) {
+  Widget _menuCard(BuildContext context, IconData icon, String label, Color cardColor, VoidCallback? onTap) {
     return Card(
       elevation: 4,
       shadowColor: cardColor.withOpacity(0.4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {},
+        onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
