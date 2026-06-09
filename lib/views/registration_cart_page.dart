@@ -11,6 +11,8 @@ class RegistrationCartPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registration Cart'),
+        backgroundColor: const Color(0xFF1565C0),
+        foregroundColor: Colors.white,
       ),
       body: Consumer<RegistrationController>(
         builder: (context, controller, child) {
@@ -21,7 +23,10 @@ class RegistrationCartPage extends StatelessWidget {
                 children: [
                   Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey),
                   SizedBox(height: 16),
-                  Text('Your cart is empty'),
+                  Text(
+                    'Your cart is empty',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
                   SizedBox(height: 8),
                   Text('Add subjects from the subject list'),
                 ],
@@ -38,12 +43,23 @@ class RegistrationCartPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final subject = controller.cartItems[index];
                     return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: ListTile(
                         leading: CircleAvatar(
-                          child: Text(subject.credit_hours.toString()),
+                          backgroundColor: Colors.blue.shade100,
+                          child: Text(
+                            subject.credit_hours.toString(),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
-                        title: Text('${subject.sub_code} - ${subject.sub_name}'),
+                        title: Text(
+                          '${subject.sub_code} - ${subject.sub_name}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         subtitle: Text('Credit Hours: ${subject.credit_hours}'),
                         trailing: IconButton(
                           icon: const Icon(Icons.remove_circle, color: Colors.red),
@@ -57,8 +73,14 @@ class RegistrationCartPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withOpacity(0.1),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
                 ),
                 child: Column(
                   children: [
@@ -79,9 +101,16 @@ class RegistrationCartPage extends StatelessWidget {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 8),
+                    LinearProgressIndicator(
+                      value: controller.totalCartCredits / 20,
+                      backgroundColor: Colors.grey.shade200,
+                      color: controller.totalCartCredits > 20 ? Colors.red : Colors.green,
+                    ),
                     const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
+                      height: 50,
                       child: ElevatedButton(
                         onPressed: controller.totalCartCredits <= 20 && controller.cartItems.isNotEmpty
                             ? () {
@@ -94,9 +123,15 @@ class RegistrationCartPage extends StatelessWidget {
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: const Color(0xFF1565C0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                        child: const Text('Proceed to Confirmation'),
+                        child: const Text(
+                          'Proceed to Confirmation',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ],

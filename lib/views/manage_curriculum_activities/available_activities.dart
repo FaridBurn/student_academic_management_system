@@ -85,7 +85,7 @@ class _AvailableActivitiesScreenState
 
   List<CurriculumActivityModel> _activities = [];
   List<CurriculumActivityModel> _filtered = [];
-  Map<String, String> _activityStatuses = {}; // activityId → status
+  Map<int, String> _activityStatuses = {}; // Changed to int key
   bool _isLoading = true;
   String _searchQuery = '';
   String? _selectedCategory;
@@ -106,17 +106,22 @@ class _AvailableActivitiesScreenState
   Future<void> _fetchActivities() async {
     setState(() => _isLoading = true);
     try {
-      final response =
-          await supabase.from('curriculum_activities').select();
+      final response = await supabase.from('curriculum_activities').select();
+      print('Raw response: $response');
+      
       final list = (response as List)
           .map((e) => CurriculumActivityModel.fromMap(e))
           .toList();
+      
       setState(() {
         _activities = list;
         _filtered = list;
         _isLoading = false;
       });
+      
+      print('Loaded ${list.length} activities');
     } catch (e) {
+      print('Error fetching activities: $e');
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -137,14 +142,15 @@ class _AvailableActivitiesScreenState
           .select('activity_id, status')
           .eq('profile_id', userId);
 
-      final Map<String, String> statuses = {};
+      final Map<int, String> statuses = {};
       for (final item in response as List) {
-        statuses[item['activity_id']] = item['status'];
+        final activityId = item['activity_id'] as int;
+        statuses[activityId] = item['status'];
       }
 
       setState(() => _activityStatuses = statuses);
     } catch (e) {
-      // silently fail
+      print('Error fetching statuses: $e');
     }
   }
 
@@ -178,7 +184,7 @@ class _AvailableActivitiesScreenState
       builder: (_) => _ActivityDetailSheet(
         activity: activity,
         status: status,
-        onActionDone: _fetchAll, // refresh after join/claim
+        onActionDone: _fetchAll,
       ),
     );
   }
@@ -203,8 +209,7 @@ class _AvailableActivitiesScreenState
                           itemBuilder: (_, i) => _ActivityCard(
                             activity: _filtered[i],
                             status: _activityStatuses[_filtered[i].id],
-                            onTap: () =>
-                                _showActivityDetail(_filtered[i]),
+                            onTap: () => _showActivityDetail(_filtered[i]),
                           ),
                         ),
                       ),
@@ -238,7 +243,6 @@ class _AvailableActivitiesScreenState
             style: TextStyle(color: Colors.white70, fontSize: 13),
           ),
           const SizedBox(height: 14),
-          // Search bar
           TextField(
             onChanged: (val) {
               _searchQuery = val;
@@ -248,20 +252,17 @@ class _AvailableActivitiesScreenState
             decoration: InputDecoration(
               hintText: 'Search activities...',
               hintStyle: const TextStyle(color: Colors.white54),
-              prefixIcon:
-                  const Icon(Icons.search, color: Colors.white70),
+              prefixIcon: const Icon(Icons.search, color: Colors.white70),
               filled: true,
-              fillColor: Colors.white.withOpacity(0.15),
+              fillColor: Colors.white.withValues(alpha: 0.15),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
               ),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 0),
+              contentPadding: const EdgeInsets.symmetric(vertical: 0),
             ),
           ),
           const SizedBox(height: 10),
-          // Category filter chips
           if (_categories.isNotEmpty)
             SizedBox(
               height: 36,
@@ -306,8 +307,7 @@ class _AvailableActivitiesScreenState
                   fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Text('Try adjusting your search or filter',
-              style:
-                  TextStyle(fontSize: 13, color: Colors.grey[400])),
+              style: TextStyle(fontSize: 13, color: Colors.grey[400])),
         ],
       ),
     );
@@ -379,7 +379,6 @@ class _ActivityCard extends StatelessWidget {
     }
   }
 
-  // Status badge config
   Color get _statusColor {
     switch (status) {
       case 'registered': return const Color(0xFF1565C0);
@@ -421,32 +420,29 @@ class _ActivityCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
         ),
         child: ListTile(
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           leading: CircleAvatar(
-            backgroundColor: _categoryColor.withOpacity(0.15),
+            backgroundColor: _categoryColor.withValues(alpha: 0.15),
             child: Icon(Icons.school, color: _categoryColor),
           ),
           title: Text(activity.name,
-              style: const TextStyle(
-                  fontWeight: FontWeight.w600, fontSize: 15)),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
           subtitle: Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Row(
               children: [
                 if (activity.category != null) ...[
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: _categoryColor.withOpacity(0.12),
+                      color: _categoryColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(activity.category!,
@@ -457,29 +453,24 @@ class _ActivityCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                 ],
-                Icon(Icons.access_time,
-                    size: 13, color: Colors.grey[500]),
+                Icon(Icons.access_time, size: 13, color: Colors.grey[500]),
                 const SizedBox(width: 3),
                 Text('${activity.hours} hrs',
-                    style: TextStyle(
-                        fontSize: 12, color: Colors.grey[600])),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600])),
               ],
             ),
           ),
-          // 👇 Show status badge or chevron
           trailing: status != null
               ? Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _statusColor.withOpacity(0.12),
+                    color: _statusColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(_statusIcon,
-                          size: 12, color: _statusColor),
+                      Icon(_statusIcon, size: 12, color: _statusColor),
                       const SizedBox(width: 4),
                       Text(_statusLabel,
                           style: TextStyle(
@@ -503,10 +494,11 @@ class _FilterChip extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  const _FilterChip(
-      {required this.label,
-      required this.selected,
-      required this.onTap});
+  const _FilterChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -514,12 +506,9 @@ class _FilterChip extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(right: 8),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-          color: selected
-              ? Colors.white
-              : Colors.white.withOpacity(0.2),
+          color: selected ? Colors.white : Colors.white.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -527,9 +516,7 @@ class _FilterChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: selected
-                ? const Color(0xFF00838F)
-                : Colors.white,
+            color: selected ? const Color(0xFF00838F) : Colors.white,
           ),
         ),
       ),
@@ -562,7 +549,6 @@ class _ActivityDetailSheet extends StatelessWidget {
     }
   }
 
-  // Button config based on status
   String get _buttonLabel {
     switch (status) {
       case 'registered': return 'Claim Hours';
@@ -584,7 +570,6 @@ class _ActivityDetailSheet extends StatelessWidget {
   }
 
   bool get _buttonEnabled {
-    // Only allow tap if not joined yet or already registered
     return status == null || status == 'registered';
   }
 
@@ -613,10 +598,9 @@ class _ActivityDetailSheet extends StatelessWidget {
           const SizedBox(height: 20),
           if (activity.category != null)
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 12, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: _categoryColor.withOpacity(0.12),
+                color: _categoryColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(activity.category!,
@@ -627,8 +611,7 @@ class _ActivityDetailSheet extends StatelessWidget {
             ),
           const SizedBox(height: 12),
           Text(activity.name,
-              style: const TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.bold)),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
           _DetailRow(
             icon: Icons.access_time,
@@ -639,11 +622,9 @@ class _ActivityDetailSheet extends StatelessWidget {
           _DetailRow(
             icon: Icons.tag,
             label: 'Activity ID',
-            value: activity.id,
+            value: activity.id.toString(),
           ),
           const SizedBox(height: 32),
-
-          // Action button based on status
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
@@ -675,15 +656,13 @@ class _ActivityDetailSheet extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: _buttonColor,
                 foregroundColor: Colors.white,
-                disabledBackgroundColor:
-                    _buttonColor.withOpacity(0.5),
+                disabledBackgroundColor: _buttonColor.withValues(alpha: 0.5),
                 disabledForegroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                textStyle: const TextStyle(
-                    fontSize: 15, fontWeight: FontWeight.w600),
+                textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -700,8 +679,11 @@ class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _DetailRow(
-      {required this.icon, required this.label, required this.value});
+  const _DetailRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -710,22 +692,17 @@ class _DetailRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF00838F).withOpacity(0.08),
+            color: const Color(0xFF00838F).withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(8),
           ),
-          child:
-              Icon(icon, size: 18, color: const Color(0xFF00838F)),
+          child: Icon(icon, size: 18, color: const Color(0xFF00838F)),
         ),
         const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label,
-                style:
-                    TextStyle(fontSize: 11, color: Colors.grey[500])),
-            Text(value,
-                style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w600)),
+            Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+            Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
           ],
         ),
       ],

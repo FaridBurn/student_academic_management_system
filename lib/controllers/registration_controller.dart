@@ -18,44 +18,28 @@ class RegistrationController extends ChangeNotifier {
   Student? get currentStudent => _currentStudent;
   int get totalCartCredits => _cartItems.fold(0, (sum, item) => sum + item.credit_hours);
 
-  // LOGIN
+  // LOGIN - Fixed version (removed duplicate code)
   Future<bool> loginUser(String email, String password) async {
     _isLoading = true;
     notifyListeners();
     
-  try {
-    print('Login attempt: email=$email, password=$password');
-    
-    final response = await _supabase
-        .from('students')
-        .select()
-        .eq('stu_email', email)
-        .eq('stu_password', password)
-        .maybeSingle();
-
-    print('Response from Supabase: $response');
-
-    if (response != null) {
-      _currentStudent = Student.fromJson(response);
-      print('Student found: ${_currentStudent!.stu_name}');
-      // ... rest
-    } else {
-      print('No student found with these credentials');
-    }
-  } catch (e) {
-    print('Error during login: $e');
-  }
-  
     try {
+      // ignore: avoid_print
+      print('Login attempt: email=$email, password=$password');
+      
       final response = await _supabase
           .from('students')
           .select()
           .eq('stu_email', email)
           .eq('stu_password', password)
           .maybeSingle();
+      // ignore: avoid_print
+      print('Response from Supabase: $response');
 
       if (response != null) {
         _currentStudent = Student.fromJson(response);
+        // ignore: avoid_print
+        print('Student found: ${_currentStudent!.stu_name}');
         
         if (_currentStudent!.stu_blocked) {
           _isLoading = false;
@@ -66,12 +50,16 @@ class RegistrationController extends ChangeNotifier {
         _isLoading = false;
         notifyListeners();
         return true;
+      } else {
+        // ignore: avoid_print
+        print('No student found with these credentials');
+        _isLoading = false;
+        notifyListeners();
+        return false;
       }
-      
-      _isLoading = false;
-      notifyListeners();
-      return false;
     } catch (e) {
+      // ignore: avoid_print
+      print('Error during login: $e');
       _isLoading = false;
       notifyListeners();
       return false;
@@ -192,7 +180,7 @@ class RegistrationController extends ChangeNotifier {
           .eq('academic_year', academicYear)
           .eq('status', 'Approved');
       
-      return response as List<Map<String, dynamic>>;
+      return response;
     } catch (e) {
       debugPrint('Error fetching timetable: $e');
       return [];

@@ -1,5 +1,5 @@
 class CurriculumActivityModel {
-  final String id;
+  final int id;
   final String name;
   final String? category;
   final int hours;
@@ -13,10 +13,10 @@ class CurriculumActivityModel {
 
   factory CurriculumActivityModel.fromMap(Map<String, dynamic> map) {
     return CurriculumActivityModel(
-      id: map['id'],
-      name: map['name'],
+      id: map['id'] as int,
+      name: map['name'] ?? '',
       category: map['category'],
-      hours: map['hours'],
+      hours: map['hours'] ?? 0,
     );
   }
 

@@ -28,14 +28,37 @@ class _ActivityVerificationScreenState
     try {
       final response = await supabase
           .from('curriculum_claims')
-          .select('*, curriculum_activities(name, category, hours), profiles(name, student_id)')
+          .select('''
+            id,
+            status,
+            remark,
+            joined_at,
+            claimed_at,
+            created_at,
+            proof_path,
+            profile_id,
+            profiles!profile_id (
+              id,
+              email,
+              name
+            ),
+            curriculum_activities!activity_id (
+              id,
+              name,
+              category,
+              hours
+            )
+          ''')
           .order('claimed_at', ascending: false);
 
       setState(() {
         _claims = List<Map<String, dynamic>>.from(response);
         _isLoading = false;
       });
+      
+      print('Loaded ${_claims.length} claims');
     } catch (e) {
+      print('Failed to load claims: $e');
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -46,18 +69,26 @@ class _ActivityVerificationScreenState
   }
 
   Future<void> _updateStatus(String claimId, String newStatus) async {
+    // Show loading indicator
+    setState(() => _isLoading = true);
+    
     try {
-      await supabase
+      print('Updating claim $claimId to status: $newStatus');
+      
+      final response = await supabase
           .from('curriculum_claims')
           .update({'status': newStatus})
           .eq('id', claimId);
-
+      
+      print('Update response: $response');
+      
+      // Refresh the list
       await _fetchClaims();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Claim $newStatus successfully'),
+            content: Text('Claim ${newStatus == 'approved' ? 'Approved' : 'Rejected'} successfully!'),
             backgroundColor: newStatus == 'approved'
                 ? const Color(0xFF2ECC71)
                 : Colors.redAccent,
@@ -65,11 +96,13 @@ class _ActivityVerificationScreenState
         );
       }
     } catch (e) {
+      print('Error updating status: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to update: $e')),
         );
       }
+      setState(() => _isLoading = false);
     }
   }
 
@@ -184,7 +217,7 @@ class _ActivityVerificationScreenState
                     decoration: BoxDecoration(
                       color: _filterStatus == t
                           ? Colors.white
-                          : Colors.white.withOpacity(0.2),
+                          : Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -206,9 +239,14 @@ class _ActivityVerificationScreenState
 
   Widget _buildClaimCard(Map<String, dynamic> claim) {
     final activity = claim['curriculum_activities'] as Map<String, dynamic>?;
-    final student = claim['profiles'] as Map<String, dynamic>?;
+    final profileData = claim['profiles'] as Map<String, dynamic>?;
+    final studentName = profileData?['name'] ?? 'Unknown Student';
+    final studentEmail = profileData?['email'] ?? '';
+    
     final status = claim['status'] as String? ?? 'pending';
     final claimedAt = DateTime.tryParse(claim['claimed_at'] ?? '');
+    final remark = claim['remark'];
+    final proofPath = claim['proof_path'];
     final isPending = status == 'pending';
 
     return Container(
@@ -218,7 +256,7 @@ class _ActivityVerificationScreenState
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -244,7 +282,7 @@ class _ActivityVerificationScreenState
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _statusColor(status).withOpacity(0.12),
+                    color: _statusColor(status).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -265,16 +303,60 @@ class _ActivityVerificationScreenState
                 Icon(Icons.access_time, size: 13, color: Colors.grey[400]),
                 const SizedBox(width: 4),
                 Text('${activity?['hours'] ?? 0} hrs',
-                    style:
-                        TextStyle(fontSize: 12, color: Colors.grey[500])),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[500])),
                 const SizedBox(width: 12),
                 Icon(Icons.category, size: 13, color: Colors.grey[400]),
                 const SizedBox(width: 4),
                 Text(activity?['category'] ?? '-',
-                    style:
-                        TextStyle(fontSize: 12, color: Colors.grey[500])),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[500])),
               ],
             ),
+            
+            // Proof link if exists
+            if (proofPath != null && proofPath.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => Dialog(
+                      child: InteractiveViewer(
+                        child: Image.network(
+                          proofPath,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(20),
+                                child: Text('Unable to load image'),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.image, size: 16, color: Colors.blue[700]),
+                      const SizedBox(width: 4),
+                      Text(
+                        'View Proof',
+                        style: TextStyle(fontSize: 12, color: Colors.blue[700]),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+            
             const Divider(height: 20),
 
             // Student info
@@ -283,20 +365,27 @@ class _ActivityVerificationScreenState
                 const Icon(Icons.person_outline,
                     size: 15, color: Color(0xFF1E3A5F)),
                 const SizedBox(width: 6),
-                Text(
-                  student?['name'] ?? 'Unknown Student',
-                  style: const TextStyle(
-                      fontSize: 13, fontWeight: FontWeight.w500),
-                ),
-                if (student?['student_id'] != null) ...[
-                  const SizedBox(width: 8),
-                  Text(
-                    '(${student!['student_id']})',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                Expanded(
+                  child: Text(
+                    studentName,
+                    style: const TextStyle(
+                        fontSize: 13, fontWeight: FontWeight.w500),
                   ),
-                ],
+                ),
               ],
             ),
+            if (studentEmail.isNotEmpty) ...[
+              const SizedBox(height: 2),
+              Row(
+                children: [
+                  const SizedBox(width: 21),
+                  Text(
+                    studentEmail,
+                    style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                  ),
+                ],
+              ),
+            ],
 
             if (claimedAt != null) ...[
               const SizedBox(height: 4),
@@ -306,8 +395,7 @@ class _ActivityVerificationScreenState
               ),
             ],
 
-            if (claim['remark'] != null &&
-                (claim['remark'] as String).isNotEmpty) ...[
+            if (remark != null && remark.isNotEmpty) ...[
               const SizedBox(height: 10),
               Container(
                 width: double.infinity,
@@ -317,9 +405,8 @@ class _ActivityVerificationScreenState
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '"${claim['remark']}"',
-                  style:
-                      TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  '"$remark"',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ),
             ],
@@ -330,32 +417,30 @@ class _ActivityVerificationScreenState
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
+                    child: OutlinedButton(
                       onPressed: () =>
-                          _showConfirmDialog(claim['id'], 'rejected'),
-                      icon: const Icon(Icons.close, size: 16),
-                      label: const Text('Reject'),
+                          _showConfirmDialog(claim['id'].toString(), 'rejected'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.redAccent,
                         side: const BorderSide(color: Colors.redAccent),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                       ),
+                      child: const Text('Reject'),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: ElevatedButton.icon(
+                    child: ElevatedButton(
                       onPressed: () =>
-                          _showConfirmDialog(claim['id'], 'approved'),
-                      icon: const Icon(Icons.check, size: 16),
-                      label: const Text('Approve'),
+                          _showConfirmDialog(claim['id'].toString(), 'approved'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2ECC71),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                       ),
+                      child: const Text('Approve'),
                     ),
                   ),
                 ],

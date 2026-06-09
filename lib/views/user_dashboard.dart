@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
       case 'lecturer':  return LecturerHome(name: name);
       case 'registrar': return AdminHome(name: name);
       case 'treasury':  return TreasuryHome(name: name);
-      case 'pusatadab': return PusatAdabHome(name: name);
+      case 'pusat_adab': return PusatAdabHome(name: name);
       default: return const Scaffold(
           body: Center(child: Text('Unknown role')));
     }
