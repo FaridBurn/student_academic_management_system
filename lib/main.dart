@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
 import 'views/login_page.dart';
 import 'controllers/registration_controller.dart';
+import 'controllers/fee_controller.dart';
+import 'services/stripe_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +16,7 @@ void main() async {
   final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
   
   if (supabaseUrl == null || supabaseAnonKey == null) {
-    print('ERROR: Missing Supabase credentials');
+    debugPrint('ERROR: Missing Supabase credentials');
     return;
   }
   
@@ -21,7 +24,12 @@ void main() async {
     url: supabaseUrl,
     publishableKey: supabaseAnonKey,
   );
-  
+
+  if (!kIsWeb) {
+    final stripeKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';
+    if (stripeKey.isNotEmpty) StripeService.init(stripeKey);
+  }
+
   runApp(const MyApp());
 }
 
@@ -32,8 +40,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Add RegistrationController provider here
         ChangeNotifierProvider(create: (_) => RegistrationController()),
+        ChangeNotifierProvider(create: (_) => FeeController()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

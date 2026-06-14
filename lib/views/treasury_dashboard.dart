@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_page.dart';
 import 'profile_page.dart';
+import 'tuition_fee/treasury_fee_overview_page.dart';
+import 'treasury/send_reminders_page.dart';
+import 'treasury/blocked_students_page.dart';
+import 'treasury/payment_report_page.dart';
+import 'treasury/verify_payments_page.dart';
 
 class TreasuryHome extends StatefulWidget {
   final String name;
@@ -39,7 +44,7 @@ class _TreasuryHomeState extends State<TreasuryHome> {
         setState(() => _isLoadingImage = false);
       }
     } catch (e) {
-      print('Error loading profile image: $e');
+      debugPrint('Error loading profile image: $e');
       setState(() => _isLoadingImage = false);
     }
   }
@@ -184,11 +189,26 @@ class _TreasuryHomeState extends State<TreasuryHome> {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   children: [
-                    _menuCard(Icons.receipt_long, 'Fee\nRecords', const Color(0xFFEF6C00)),
-                    _menuCard(Icons.notifications, 'Send\nReminders', const Color(0xFFF57C00)),
-                    _menuCard(Icons.block, 'Blocked\nStudents', const Color(0xFFC62828)),
-                    _menuCard(Icons.bar_chart, 'Payment\nReport', const Color(0xFF2E7D32)),
-                    _menuCard(Icons.price_check, 'Verify\nPayments', const Color(0xFF00838F)),
+                    _menuCard(Icons.receipt_long, 'Fee\nRecords', const Color(0xFFEF6C00), () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (_) => const TreasuryFeeOverviewPage()));
+                    }),
+                    _menuCard(Icons.notifications, 'Send\nReminders', const Color(0xFFF57C00), () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (_) => const SendRemindersPage()));
+                    }),
+                    _menuCard(Icons.block, 'Blocked\nStudents', const Color(0xFFC62828), () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (_) => const BlockedStudentsPage()));
+                    }),
+                    _menuCard(Icons.bar_chart, 'Payment\nReport', const Color(0xFF2E7D32), () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (_) => const PaymentReportPage()));
+                    }),
+                    _menuCard(Icons.price_check, 'Verify\nPayments', const Color(0xFF00838F), () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (_) => const VerifyPaymentsPage()));
+                    }),
                     _menuCard(Icons.person, 'My\nProfile', const Color(0xFF5E35B1), () {
                       Navigator.push(
                         context,
