@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controllers/registration_controller.dart';
+import '../../controllers/registration_controller.dart';
 import 'subject_detail_page.dart';
 import 'registration_cart_page.dart';
 

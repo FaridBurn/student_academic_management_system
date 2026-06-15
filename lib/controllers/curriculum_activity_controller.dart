@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/curriculum.dart';
+import '../models/curriculum_activity.dart';
 import '../models/activity_claim.dart';  // Now this exists!
 
 class CurriculumController extends ChangeNotifier {

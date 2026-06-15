@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'login_page.dart';
+import 'ManageRegistration/login_page.dart';
 import 'profile_page.dart';
-import 'manage_curriculum_activities/curriculum_activities.dart';
-import 'manage_curriculum_activities/activity_verification.dart';
-import 'manage_curriculum_activities/student_credits.dart';
-import 'manage_curriculum_activities/activity_report.dart';
+import 'ManageCurriculumActivities/curriculum_activities.dart';
+import 'ManageCurriculumActivities/activity_verification_page.dart';
+import 'ManageCurriculumActivities/student_credits.dart';
+import 'ManageCurriculumActivities/activity_report.dart';
 
 class PusatAdabHome extends StatefulWidget {
   final String name;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_page.dart';
 import 'profile_page.dart';
+import 'manage_attendance/session_dashboard_page.dart';
 
 class LecturerHome extends StatefulWidget {
   final String name;
@@ -37,7 +38,7 @@ class _LecturerHomeState extends State<LecturerHome> {
         });
       }
     } catch (e) {
-      print('Error loading profile image: $e');
+      debugPrint('Error loading profile image: $e');
       setState(() => _isLoadingImage = false);
     }
   }
@@ -182,9 +183,15 @@ class _LecturerHomeState extends State<LecturerHome> {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   children: [
-                    _menuCard(Icons.qr_code, 'Generate\nAttendance Code', const Color(0xFF388E3C)),
+                    _menuCard(Icons.qr_code, 'Generate\nAttendance Code', const Color(0xFF388E3C), () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (_) => const SessionDashboardPage()));
+                    }),
                     _menuCard(Icons.people, 'My\nStudents', const Color(0xFF00796B)),
-                    _menuCard(Icons.bar_chart, 'Attendance\nReport', const Color(0xFF0288D1)),
+                    _menuCard(Icons.bar_chart, 'Attendance\nReport', const Color(0xFF0288D1), () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (_) => const SessionDashboardPage()));
+                    }),
                     _menuCard(Icons.book, 'My\nSubjects', const Color(0xFF558B2F)),
                     _menuCard(Icons.person, 'My\nProfile', const Color(0xFF5E35B1), () {
                       Navigator.push(

@@ -5,6 +5,8 @@ import 'subject_list_page.dart';
 import 'timetable_view_page.dart';
 import 'profile_page.dart';
 import 'manage_curriculum_activities/available_activities.dart';
+import 'manage_attendance/student_check_in_page.dart';
+import 'manage_tuition_fees/tuitionfee_dashboard_page.dart';
 
 class StudentHome extends StatefulWidget {
   final String name;
@@ -40,7 +42,7 @@ class _StudentHomeState extends State<StudentHome> {
         });
       }
     } catch (e) {
-      print('Error loading profile image: $e');
+      debugPrint('Error loading profile image: $e');
       setState(() => _isLoadingImage = false);
     }
   }
@@ -198,7 +200,10 @@ class _StudentHomeState extends State<StudentHome> {
                         MaterialPageRoute(builder: (_) => const TimetableViewPage()),
                       );
                     }),
-                    _menuCard(context, Icons.qr_code_scanner, 'Check\nAttendance', const Color(0xFF0288D1), () {}),
+                    _menuCard(context, Icons.qr_code_scanner, 'Check\nAttendance', const Color(0xFF0288D1), () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (_) => const StudentCheckInPage()));
+                    }),
                     _menuCard(context, Icons.sports, 'Curriculum\nActivities', const Color(0xFF0097A7),
                         () => Navigator.push(
                               context,
@@ -206,7 +211,15 @@ class _StudentHomeState extends State<StudentHome> {
                                 builder: (_) => CurriculumHomeScreen(name: widget.name),
                               ),
                             )),
-                    _menuCard(context, Icons.payment, 'Tuition\nFees', const Color(0xFFD32F2F), () {}),
+                    _menuCard(context, Icons.payment, 'Tuition\nFees', const Color(0xFFD32F2F), () {
+                      final studentId = Supabase.instance.client.auth.currentUser!.id;
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (_) => TuitionFeeDashboardPage(
+                          studentUid: studentId,
+                          studentName: widget.name,
+                        ),
+                      ));
+                    }),
                     _menuCard(context, Icons.person, 'My\nProfile', const Color(0xFF5E35B1), () {
                       Navigator.push(
                         context,

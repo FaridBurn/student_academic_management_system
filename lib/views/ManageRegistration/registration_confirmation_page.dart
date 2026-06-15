@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controllers/registration_controller.dart';
-import 'registration_success_page.dart';
+import '../../controllers/registration_controller.dart';
+import '../registration_success_page.dart';
 import 'registration_error_page.dart';
 
 class RegistrationConfirmationPage extends StatelessWidget {

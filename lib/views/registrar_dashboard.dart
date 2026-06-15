@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'login_page.dart';
+import 'ManageRegistration/login_page.dart';
 import 'profile_page.dart';
 
 class AdminHome extends StatefulWidget {

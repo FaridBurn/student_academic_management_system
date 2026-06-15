@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controllers/registration_controller.dart';
+import '../../controllers/registration_controller.dart';
 import 'registration_confirmation_page.dart';
 
 class RegistrationCartPage extends StatelessWidget {
