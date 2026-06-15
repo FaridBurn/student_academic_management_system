@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_page.dart';
 import 'profile_page.dart';
-import 'tuition_fee/treasury_fee_overview_page.dart';
-import 'treasury/send_reminders_page.dart';
-import 'treasury/blocked_students_page.dart';
-import 'treasury/payment_report_page.dart';
-import 'treasury/verify_payments_page.dart';
+import 'manage_tuition_fees/treasury_fee_overview_page.dart';
+import 'manage_tuition_fees/send_reminders_page.dart';
+import 'manage_tuition_fees/blocked_students_page.dart';
+import 'manage_tuition_fees/payment_report_page.dart';
+import 'manage_tuition_fees/verify_payments_page.dart';
 
 class TreasuryHome extends StatefulWidget {
   final String name;
@@ -35,7 +35,7 @@ class _TreasuryHomeState extends State<TreasuryHome> {
             .select('avatar_url')
             .eq('id', userId)
             .maybeSingle();
-        
+
         setState(() {
           _profileImageUrl = response?['avatar_url'];
           _isLoadingImage = false;
@@ -76,7 +76,14 @@ class _TreasuryHomeState extends State<TreasuryHome> {
                           builder: (_) => ProfilePage(
                             name: widget.name,
                             role: 'treasury',
-                            email: Supabase.instance.client.auth.currentUser?.email ?? '',
+                            email:
+                                Supabase
+                                    .instance
+                                    .client
+                                    .auth
+                                    .currentUser
+                                    ?.email ??
+                                '',
                           ),
                         ),
                       ).then((_) => _loadProfileImage());
@@ -108,24 +115,25 @@ class _TreasuryHomeState extends State<TreasuryHome> {
                                 ),
                               )
                             : (_profileImageUrl != null
-                                ? Image.network(
-                                    _profileImageUrl!,
-                                    width: 55,
-                                    height: 55,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(
-                                        Icons.person,
-                                        size: 30,
-                                        color: Color(0xFFE65100),
-                                      );
-                                    },
-                                  )
-                                : const Icon(
-                                    Icons.person,
-                                    size: 30,
-                                    color: Color(0xFFE65100),
-                                  )),
+                                  ? Image.network(
+                                      _profileImageUrl!,
+                                      width: 55,
+                                      height: 55,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return const Icon(
+                                              Icons.person,
+                                              size: 30,
+                                              color: Color(0xFFE65100),
+                                            );
+                                          },
+                                    )
+                                  : const Icon(
+                                      Icons.person,
+                                      size: 30,
+                                      color: Color(0xFFE65100),
+                                    )),
                       ),
                     ),
                   ),
@@ -149,7 +157,10 @@ class _TreasuryHomeState extends State<TreasuryHome> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
@@ -173,7 +184,9 @@ class _TreasuryHomeState extends State<TreasuryHome> {
                       if (context.mounted) {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
                         );
                       }
                     },
@@ -189,38 +202,95 @@ class _TreasuryHomeState extends State<TreasuryHome> {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   children: [
-                    _menuCard(Icons.receipt_long, 'Fee\nRecords', const Color(0xFFEF6C00), () {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => const TreasuryFeeOverviewPage()));
-                    }),
-                    _menuCard(Icons.notifications, 'Send\nReminders', const Color(0xFFF57C00), () {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => const SendRemindersPage()));
-                    }),
-                    _menuCard(Icons.block, 'Blocked\nStudents', const Color(0xFFC62828), () {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => const BlockedStudentsPage()));
-                    }),
-                    _menuCard(Icons.bar_chart, 'Payment\nReport', const Color(0xFF2E7D32), () {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => const PaymentReportPage()));
-                    }),
-                    _menuCard(Icons.price_check, 'Verify\nPayments', const Color(0xFF00838F), () {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => const VerifyPaymentsPage()));
-                    }),
-                    _menuCard(Icons.person, 'My\nProfile', const Color(0xFF5E35B1), () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ProfilePage(
-                            name: widget.name,
-                            role: 'treasury',
-                            email: Supabase.instance.client.auth.currentUser?.email ?? '',
+                    _menuCard(
+                      Icons.receipt_long,
+                      'Fee\nRecords',
+                      const Color(0xFFEF6C00),
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const TreasuryFeeOverviewPage(),
                           ),
-                        ),
-                      ).then((_) => _loadProfileImage());
-                    }),
+                        );
+                      },
+                    ),
+                    _menuCard(
+                      Icons.notifications,
+                      'Send\nReminders',
+                      const Color(0xFFF57C00),
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const SendRemindersPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    _menuCard(
+                      Icons.block,
+                      'Blocked\nStudents',
+                      const Color(0xFFC62828),
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const BlockedStudentsPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    _menuCard(
+                      Icons.bar_chart,
+                      'Payment\nReport',
+                      const Color(0xFF2E7D32),
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const PaymentReportPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    _menuCard(
+                      Icons.price_check,
+                      'Verify\nPayments',
+                      const Color(0xFF00838F),
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const VerifyPaymentsPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    _menuCard(
+                      Icons.person,
+                      'My\nProfile',
+                      const Color(0xFF5E35B1),
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProfilePage(
+                              name: widget.name,
+                              role: 'treasury',
+                              email:
+                                  Supabase
+                                      .instance
+                                      .client
+                                      .auth
+                                      .currentUser
+                                      ?.email ??
+                                  '',
+                            ),
+                          ),
+                        ).then((_) => _loadProfileImage());
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -231,7 +301,12 @@ class _TreasuryHomeState extends State<TreasuryHome> {
     );
   }
 
-  Widget _menuCard(IconData icon, String label, Color cardColor, [VoidCallback? onTap]) {
+  Widget _menuCard(
+    IconData icon,
+    String label,
+    Color cardColor, [
+    VoidCallback? onTap,
+  ]) {
     return Card(
       elevation: 4,
       shadowColor: cardColor.withValues(alpha: 0.4),

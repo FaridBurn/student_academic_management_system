@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'ManageRegistration/login_page.dart';
+import 'login_page.dart';
+import 'subject_list_page.dart';
+import 'timetable_view_page.dart';
 import 'profile_page.dart';
+import 'manage_curriculum_activities/available_activities.dart';
+import 'manage_attendance/student_check_in_page.dart';
+import 'manage_tuition_fees/tuitionfee_dashboard_page.dart';
 
-class AdminHome extends StatefulWidget {
+class StudentHome extends StatefulWidget {
   final String name;
-  const AdminHome({super.key, required this.name});
+  const StudentHome({super.key, required this.name});
 
   @override
-  State<AdminHome> createState() => _AdminHomeState();
+  State<StudentHome> createState() => _StudentHomeState();
 }
 
-class _AdminHomeState extends State<AdminHome> {
+class _StudentHomeState extends State<StudentHome> {
   String? _profileImageUrl;
   bool _isLoadingImage = true;
 
@@ -35,11 +40,9 @@ class _AdminHomeState extends State<AdminHome> {
           _profileImageUrl = response?['avatar_url'];
           _isLoadingImage = false;
         });
-      } else {
-        setState(() => _isLoadingImage = false);
       }
     } catch (e) {
-      print('Error loading profile image: $e');
+      debugPrint('Error loading profile image: $e');
       setState(() => _isLoadingImage = false);
     }
   }
@@ -47,7 +50,7 @@ class _AdminHomeState extends State<AdminHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F0FF),
+      backgroundColor: const Color(0xFFF0F4FF),
       body: SafeArea(
         child: Column(
           children: [
@@ -55,7 +58,7 @@ class _AdminHomeState extends State<AdminHome> {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
-                color: Color(0xFF6A1B9A),
+                color: Color(0xFF1565C0),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(28),
                   bottomRight: Radius.circular(28),
@@ -63,6 +66,7 @@ class _AdminHomeState extends State<AdminHome> {
               ),
               child: Row(
                 children: [
+                  // Profile Avatar with actual image
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -70,11 +74,11 @@ class _AdminHomeState extends State<AdminHome> {
                         MaterialPageRoute(
                           builder: (_) => ProfilePage(
                             name: widget.name,
-                            role: 'registrar',
+                            role: 'student',
                             email: Supabase.instance.client.auth.currentUser?.email ?? '',
                           ),
                         ),
-                      ).then((_) => _loadProfileImage());
+                      ).then((_) => _loadProfileImage()); // Refresh on return
                     },
                     child: Container(
                       width: 55,
@@ -98,7 +102,7 @@ class _AdminHomeState extends State<AdminHome> {
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: Color(0xFF6A1B9A),
+                                    color: Color(0xFF1565C0),
                                   ),
                                 ),
                               )
@@ -112,14 +116,14 @@ class _AdminHomeState extends State<AdminHome> {
                                       return const Icon(
                                         Icons.person,
                                         size: 30,
-                                        color: Color(0xFF6A1B9A),
+                                        color: Color(0xFF1565C0),
                                       );
                                     },
                                   )
                                 : const Icon(
                                     Icons.person,
                                     size: 30,
-                                    color: Color(0xFF6A1B9A),
+                                    color: Color(0xFF1565C0),
                                   )),
                       ),
                     ),
@@ -150,7 +154,7 @@ class _AdminHomeState extends State<AdminHome> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Text(
-                            'Registrar',
+                            'Student',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10,
@@ -184,18 +188,45 @@ class _AdminHomeState extends State<AdminHome> {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   children: [
-                    _menuCard(Icons.app_registration, 'Open\nRegistration', const Color(0xFF7B1FA2)),
-                    _menuCard(Icons.people, 'All\nStudents', const Color(0xFF6A1B9A)),
-                    _menuCard(Icons.book, 'Manage\nSubjects', const Color(0xFF4527A0)),
-                    _menuCard(Icons.payment, 'Fee\nManagement', const Color(0xFFC62828)),
-                    _menuCard(Icons.bar_chart, 'Reports', const Color(0xFF00695C)),
-                    _menuCard(Icons.person, 'My\nProfile', const Color(0xFF37474F), () {
+                    _menuCard(context, Icons.app_registration, 'Subject\nRegistration', const Color(0xFF1976D2), () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SubjectListPage()),
+                      );
+                    }),
+                    _menuCard(context, Icons.book, 'My\nSubjects', const Color(0xFF388E3C), () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const TimetableViewPage()),
+                      );
+                    }),
+                    _menuCard(context, Icons.qr_code_scanner, 'Check\nAttendance', const Color(0xFF0288D1), () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (_) => const StudentCheckInPage()));
+                    }),
+                    _menuCard(context, Icons.sports, 'Curriculum\nActivities', const Color(0xFF0097A7),
+                        () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => CurriculumHomeScreen(name: widget.name),
+                              ),
+                            )),
+                    _menuCard(context, Icons.payment, 'Tuition\nFees', const Color(0xFFD32F2F), () {
+                      final studentId = Supabase.instance.client.auth.currentUser!.id;
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (_) => TuitionFeeDashboardPage(
+                          studentUid: studentId,
+                          studentName: widget.name,
+                        ),
+                      ));
+                    }),
+                    _menuCard(context, Icons.person, 'My\nProfile', const Color(0xFF5E35B1), () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => ProfilePage(
                             name: widget.name,
-                            role: 'registrar',
+                            role: 'student',
                             email: Supabase.instance.client.auth.currentUser?.email ?? '',
                           ),
                         ),
@@ -211,14 +242,14 @@ class _AdminHomeState extends State<AdminHome> {
     );
   }
 
-  Widget _menuCard(IconData icon, String label, Color cardColor, [VoidCallback? onTap]) {
+  Widget _menuCard(BuildContext context, IconData icon, String label, Color cardColor, VoidCallback? onTap) {
     return Card(
       elevation: 4,
       shadowColor: cardColor.withValues(alpha: 0.4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: onTap ?? () {},
+        onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),

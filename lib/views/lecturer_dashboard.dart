@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_page.dart';
 import 'profile_page.dart';
-import 'attendance/lecturer/lecturer_sessions_page.dart';
+import 'manage_attendance/session_dashboard_page.dart';
 
 class LecturerHome extends StatefulWidget {
   final String name;
@@ -185,12 +185,12 @@ class _LecturerHomeState extends State<LecturerHome> {
                   children: [
                     _menuCard(Icons.qr_code, 'Generate\nAttendance Code', const Color(0xFF388E3C), () {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => const LecturerSessionsPage()));
+                          builder: (_) => const SessionDashboardPage()));
                     }),
                     _menuCard(Icons.people, 'My\nStudents', const Color(0xFF00796B)),
                     _menuCard(Icons.bar_chart, 'Attendance\nReport', const Color(0xFF0288D1), () {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => const LecturerSessionsPage()));
+                          builder: (_) => const SessionDashboardPage()));
                     }),
                     _menuCard(Icons.book, 'My\nSubjects', const Color(0xFF558B2F)),
                     _menuCard(Icons.person, 'My\nProfile', const Color(0xFF5E35B1), () {
