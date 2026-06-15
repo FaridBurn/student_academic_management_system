@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../services/attendance_service.dart';
 
-class StudentCheckinPage extends StatefulWidget {
-  const StudentCheckinPage({super.key});
+class StudentCheckInPage extends StatefulWidget {
+  const StudentCheckInPage({super.key});
 
   @override
-  State<StudentCheckinPage> createState() => _StudentCheckinPageState();
+  State<StudentCheckInPage> createState() => _StudentCheckInPageState();
 }
 
-class _StudentCheckinPageState extends State<StudentCheckinPage> {
+class _StudentCheckInPageState extends State<StudentCheckInPage> {
   static const _blue = Color(0xFF0288D1);
 
   final _codeCtrl = TextEditingController();
@@ -138,8 +138,7 @@ class _StudentCheckinPageState extends State<StudentCheckinPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child:
-                Text('OK', style: TextStyle(color: color)),
+            child: Text('OK', style: TextStyle(color: color)),
           ),
         ],
       ),
@@ -215,8 +214,7 @@ class _StudentCheckinPageState extends State<StudentCheckinPage> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide:
-                      const BorderSide(color: _blue, width: 2),
+                  borderSide: const BorderSide(color: _blue, width: 2),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20, vertical: 20),
@@ -225,8 +223,7 @@ class _StudentCheckinPageState extends State<StudentCheckinPage> {
                 if (v != v.toUpperCase()) {
                   _codeCtrl.value = _codeCtrl.value.copyWith(
                     text: v.toUpperCase(),
-                    selection: TextSelection.collapsed(
-                        offset: v.length),
+                    selection: TextSelection.collapsed(offset: v.length),
                   );
                 }
               },
@@ -254,8 +251,8 @@ class _StudentCheckinPageState extends State<StudentCheckinPage> {
                     ),
                     const SizedBox(width: 10),
                     Text(_gpsStatus!,
-                        style: const TextStyle(
-                            color: _blue, fontSize: 13)),
+                        style:
+                            const TextStyle(color: _blue, fontSize: 13)),
                   ],
                 ),
               ),
@@ -279,8 +276,7 @@ class _StudentCheckinPageState extends State<StudentCheckinPage> {
                       child: Text(
                         'GPS verification is disabled on web. Use the mobile app for full attendance validation.',
                         style: TextStyle(
-                            color: Colors.orange.shade800,
-                            fontSize: 12),
+                            color: Colors.orange.shade800, fontSize: 12),
                       ),
                     ),
                   ],
@@ -327,8 +323,7 @@ class _StudentCheckinPageState extends State<StudentCheckinPage> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  border:
-                      Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: Colors.grey.shade200),
                 ),
                 child: Row(
                   children: [
@@ -339,8 +334,7 @@ class _StudentCheckinPageState extends State<StudentCheckinPage> {
                       child: Text(
                         'Your GPS location will be captured to verify you are on campus.',
                         style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 12),
+                            color: Colors.grey.shade600, fontSize: 12),
                       ),
                     ),
                   ],

@@ -5,8 +5,8 @@ import 'subject_list_page.dart';
 import 'timetable_view_page.dart';
 import 'profile_page.dart';
 import 'manage_curriculum_activities/available_activities.dart';
-import 'attendance/student/student_checkin_page.dart';
-import 'tuition_fee/tuitionfee_dashboard_page.dart';
+import 'manage_attendance/student_check_in_page.dart';
+import 'manage_tuition_fees/tuitionfee_dashboard_page.dart';
 
 class StudentHome extends StatefulWidget {
   final String name;
@@ -202,7 +202,7 @@ class _StudentHomeState extends State<StudentHome> {
                     }),
                     _menuCard(context, Icons.qr_code_scanner, 'Check\nAttendance', const Color(0xFF0288D1), () {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => const StudentCheckinPage()));
+                          builder: (_) => const StudentCheckInPage()));
                     }),
                     _menuCard(context, Icons.sports, 'Curriculum\nActivities', const Color(0xFF0097A7),
                         () => Navigator.push(

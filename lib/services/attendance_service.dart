@@ -8,8 +8,8 @@ class AttendanceService {
   static final _db = Supabase.instance.client;
 
   // UMPSA Pekan Campus geofence — update lat/lng to match your actual campus
-  static const double campusLat = 3.5396;
-  static const double campusLng = 103.4284;
+  static const double campusLat = 3.546771;
+  static const double campusLng = 103.427737;
   static const double campusRadiusMeters = 500.0;
 
   // Excludes visually confusable characters (0/O, 1/I/L)
@@ -92,7 +92,63 @@ class AttendanceService {
         .select()
         .eq('lecturer_id', lecturerId)
         .order('created_at', ascending: false);
-    return List<Map<String, dynamic>>.from(data);
+    final sessions = List<Map<String, dynamic>>.from(data);
+    await _closeExpiredSessions(sessions);
+    // Re-fetch so callers see updated is_active values after auto-close.
+    final refreshed = await _db
+        .from('attendance_sessions')
+        .select()
+        .eq('lecturer_id', lecturerId)
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(refreshed);
+  }
+
+  /// Closes any active session whose end time on session_date has passed.
+  static Future<void> _closeExpiredSessions(
+    List<Map<String, dynamic>> sessions,
+  ) async {
+    final now = DateTime.now();
+    for (final s in sessions) {
+      if (s['is_active'] != true) continue;
+      final endDt = _sessionEndDateTime(s);
+      if (endDt != null && now.isAfter(endDt)) {
+        await toggleSession(s['session_id'] as int, false);
+      }
+    }
+  }
+
+  /// Parses session_date + end_time into a DateTime, or null on failure.
+  static DateTime? _sessionEndDateTime(Map<String, dynamic> s) {
+    final dateStr = s['session_date'] as String?;
+    final endStr = s['end_time'] as String?;
+    if (dateStr == null || endStr == null) return null;
+    try {
+      final date = DateTime.parse(dateStr);
+      final parts = endStr.split(':');
+      return DateTime(
+        date.year,
+        date.month,
+        date.day,
+        int.parse(parts[0]),
+        int.parse(parts[1]),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Returns the end DateTime of the soonest active session that hasn't
+  /// expired yet, or null if there are none.
+  static DateTime? nextSessionExpiry(List<Map<String, dynamic>> sessions) {
+    final now = DateTime.now();
+    DateTime? soonest;
+    for (final s in sessions) {
+      if (s['is_active'] != true) continue;
+      final endDt = _sessionEndDateTime(s);
+      if (endDt == null || !endDt.isAfter(now)) continue;
+      if (soonest == null || endDt.isBefore(soonest)) soonest = endDt;
+    }
+    return soonest;
   }
 
   static Future<List<Map<String, dynamic>>> getSessionAttendance(

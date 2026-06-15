@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../services/attendance_service.dart';
 
-class ViewAttendancePage extends StatefulWidget {
+class RealTimeAttendancePage extends StatefulWidget {
   final Map<String, dynamic> session;
-  const ViewAttendancePage({super.key, required this.session});
+  const RealTimeAttendancePage({super.key, required this.session});
 
   @override
-  State<ViewAttendancePage> createState() => _ViewAttendancePageState();
+  State<RealTimeAttendancePage> createState() => _RealTimeAttendancePageState();
 }
 
-class _ViewAttendancePageState extends State<ViewAttendancePage> {
+class _RealTimeAttendancePageState extends State<RealTimeAttendancePage> {
   static const _green = Color(0xFF2E7D32);
 
   List<Map<String, dynamic>> _records = [];
@@ -45,7 +45,7 @@ class _ViewAttendancePageState extends State<ViewAttendancePage> {
         });
       }
     } catch (_) {
-      if (mounted) { setState(() => _loading = false); }
+      if (mounted) setState(() => _loading = false);
     }
   }
 

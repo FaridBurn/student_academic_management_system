@@ -1,24 +1,26 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../services/attendance_service.dart';
 import 'create_session_page.dart';
-import 'view_attendance_page.dart';
+import 'real_time_attendance_page.dart';
 import 'attendance_report_page.dart';
 
-class LecturerSessionsPage extends StatefulWidget {
-  const LecturerSessionsPage({super.key});
+class SessionDashboardPage extends StatefulWidget {
+  const SessionDashboardPage({super.key});
 
   @override
-  State<LecturerSessionsPage> createState() => _LecturerSessionsPageState();
+  State<SessionDashboardPage> createState() => _SessionDashboardPageState();
 }
 
-class _LecturerSessionsPageState extends State<LecturerSessionsPage> {
+class _SessionDashboardPageState extends State<SessionDashboardPage> {
   static const _green = Color(0xFF2E7D32);
 
   List<Map<String, dynamic>> _sessions = [];
   bool _loading = true;
   late String _lecturerId;
+  Timer? _expiryTimer;
 
   @override
   void initState() {
@@ -27,21 +29,39 @@ class _LecturerSessionsPageState extends State<LecturerSessionsPage> {
     _load();
   }
 
+  @override
+  void dispose() {
+    _expiryTimer?.cancel();
+    super.dispose();
+  }
+
   Future<void> _load() async {
     setState(() => _loading = true);
     try {
       final data = await AttendanceService.getLecturerSessions(_lecturerId);
+      if (!mounted) return;
       setState(() {
         _sessions = data;
         _loading = false;
       });
+      _scheduleExpiryRefresh(data);
     } catch (e) {
+      if (!mounted) return;
       setState(() => _loading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
+  }
+
+  /// Sets a one-shot timer that fires the moment the soonest active session
+  /// reaches its end time, triggering a reload to reflect the auto-close.
+  void _scheduleExpiryRefresh(List<Map<String, dynamic>> sessions) {
+    _expiryTimer?.cancel();
+    final expiry = AttendanceService.nextSessionExpiry(sessions);
+    if (expiry == null) return;
+    final delay = expiry.difference(DateTime.now());
+    if (delay.isNegative) return;
+    _expiryTimer = Timer(delay, _load);
   }
 
   Future<void> _toggleActive(Map<String, dynamic> session) async {
@@ -210,7 +230,7 @@ class _LecturerSessionsPageState extends State<LecturerSessionsPage> {
                       context,
                       MaterialPageRoute(
                           builder: (_) =>
-                              ViewAttendancePage(session: s)),
+                              RealTimeAttendancePage(session: s)),
                     ),
                   ),
                 ),
