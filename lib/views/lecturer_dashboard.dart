@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'ManageRegistration/login_page.dart';
+import 'login_page.dart';
 import 'ManageAttendance/session_dashboard_page.dart';
 import 'profile_page.dart';
-import 'my_students_page.dart';
-import 'my_subjects_page.dart';
+import 'ManageAttendance/my_students_page.dart';
+import 'ManageAttendance/my_subjects_page.dart';
 
 class LecturerHome extends StatefulWidget {
   final String name;

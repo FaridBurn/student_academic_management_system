@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'ManageRegistration/login_page.dart';
+import 'login_page.dart';
 import 'profile_page.dart';
-import 'registrar/open_registration_page.dart';
-import 'registrar/all_students_page.dart';
-import 'registrar/manage_subjects_page.dart';
-import 'registrar/fee_management_page.dart';
-import 'registrar/reports_page.dart';
+import 'ManageRegistration/open_registration_page.dart';
+import 'ManageRegistration/all_students_page.dart';
+import 'ManageRegistration/manage_subjects_page.dart';
+import 'ManageRegistration/fee_management_page.dart';
+import 'ManageRegistration/reports_page.dart';
 
 class RegistrarDashboard extends StatefulWidget {
   final String name;

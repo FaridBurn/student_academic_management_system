@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'profile_page.dart';
-import 'ManageRegistration/login_page.dart';
+import 'login_page.dart';
 import 'ManageTuitionFees/treasury_fee_overview_page.dart';
 import 'ManageTuitionFees/send_reminders_page.dart';
 import 'ManageTuitionFees/blocked_students_page.dart';

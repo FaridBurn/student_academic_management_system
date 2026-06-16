@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ManageRegistration/student_dashboard.dart';
+import 'student_dashboard.dart';
 import 'lecturer_dashboard.dart';
 import 'registrar_dashboard.dart';
 import 'treasury_dashboard.dart';

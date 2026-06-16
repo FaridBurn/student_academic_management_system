@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/curriculum_activity.dart';
-import '../ManageRegistration/student_dashboard.dart';
+import '../student_dashboard.dart';
 import 'claim_activity_page.dart';
 import 'claim_status_page.dart';
 import 'claim_history_page.dart';
