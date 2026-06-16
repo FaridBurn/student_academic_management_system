@@ -81,7 +81,11 @@ class AttendanceService {
         })
         .select()
         .single();
+<<<<<<< HEAD
     return data;
+=======
+    return data as Map<String, dynamic>;
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
   }
 
   static Future<List<Map<String, dynamic>>> getLecturerSessions(
@@ -241,4 +245,8 @@ class AttendanceService {
         .update({'is_active': isActive})
         .eq('session_id', sessionId);
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55

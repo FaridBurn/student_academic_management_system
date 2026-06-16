@@ -7,4 +7,8 @@ Future<void> downloadBytes(String filename, List<int> bytes) async {
   final file = File('${dir.path}/$filename');
   await file.writeAsBytes(bytes);
   await OpenFilex.open(file.path);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55

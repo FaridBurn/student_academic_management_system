@@ -46,4 +46,8 @@ flutter {
 
 dependencies {
     implementation("com.google.android.material:material:1.12.0")
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55

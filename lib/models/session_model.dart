@@ -47,4 +47,8 @@ class SessionModel {
       'is_active': isActive,
     };
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55

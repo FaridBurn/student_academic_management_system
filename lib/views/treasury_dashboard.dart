@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+<<<<<<< HEAD
 import 'profile_page.dart';
 import 'login_page.dart';
 import 'ManageTuitionFees/treasury_fee_overview_page.dart';
@@ -7,6 +8,15 @@ import 'ManageTuitionFees/send_reminders_page.dart';
 import 'ManageTuitionFees/blocked_students_page.dart';
 import 'ManageTuitionFees/payment_report_page.dart';
 import 'ManageTuitionFees/verify_payments_page.dart';
+=======
+import 'login_page.dart';
+import 'profile_page.dart';
+import 'manage_tuition_fees/treasury_fee_overview_page.dart';
+import 'manage_tuition_fees/send_reminders_page.dart';
+import 'manage_tuition_fees/blocked_students_page.dart';
+import 'manage_tuition_fees/payment_report_page.dart';
+import 'manage_tuition_fees/verify_payments_page.dart';
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
 
 class TreasuryHome extends StatefulWidget {
   final String name;
@@ -343,4 +353,8 @@ class _TreasuryHomeState extends State<TreasuryHome> {
       ),
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55

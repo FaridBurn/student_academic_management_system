@@ -15,4 +15,8 @@
     <style name="NormalTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+<<<<<<< HEAD
 </resources>
+=======
+</resources>
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55

@@ -66,11 +66,14 @@ class RegistrationController extends ChangeNotifier {
     }
   }
 
+<<<<<<< HEAD
   void setCurrentStudent(Student student) {
       _currentStudent = student;
     notifyListeners();
   }
 
+=======
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
   // FETCH ALL SUBJECTS
   Future<void> fetchSubjects() async {
     _isLoading = true;
@@ -138,6 +141,7 @@ class RegistrationController extends ChangeNotifier {
   }
 
   // SUBMIT REGISTRATION
+<<<<<<< HEAD
 Future<bool> submitRegistration(String semester, String academicYear) async {
   print('submitRegistration called. Student: ${_currentStudent?.studentID}, Cart items: ${_cartItems.length}');
   if (_currentStudent == null || _cartItems.isEmpty) {
@@ -198,6 +202,61 @@ Future<List<Map<String, dynamic>>> fetchTimetable(String semester, String academ
     return [];
   }
 }
+=======
+  Future<bool> submitRegistration(String semester, String academicYear) async {
+    if (_currentStudent == null || _cartItems.isEmpty) return false;
+    
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      for (var subject in _cartItems) {
+        await _supabase.from('registrations').insert({
+          'studentID': _currentStudent!.studentID,
+          'subjectID': subject.subjectID,
+          'semester': semester,
+          'academic_year': academicYear,
+          'status': 'Pending',
+          'registered_at': DateTime.now().toIso8601String(),
+        });
+      }
+      
+      _cartItems.clear();
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      debugPrint('Error submitting registration: $e');
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // FETCH TIMETABLE
+  Future<List<Map<String, dynamic>>> fetchTimetable(String semester, String academicYear) async {
+    if (_currentStudent == null) return [];
+    
+    try {
+      final response = await _supabase
+          .from('registrations')
+          .select('''
+            registrationID,
+            status,
+            subjects:subjectID (subjectID, sub_code, sub_name, credit_hours)
+          ''')
+          .eq('studentID', _currentStudent!.studentID)
+          .eq('semester', semester)
+          .eq('academic_year', academicYear)
+          .eq('status', 'Approved');
+      
+      return response;
+    } catch (e) {
+      debugPrint('Error fetching timetable: $e');
+      return [];
+    }
+  }
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
   
   // LOGOUT
   void logout() {

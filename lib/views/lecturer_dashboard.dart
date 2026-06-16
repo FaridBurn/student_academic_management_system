@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_page.dart';
+<<<<<<< HEAD
 import 'ManageAttendance/session_dashboard_page.dart';
 import 'profile_page.dart';
 import 'ManageAttendance/my_students_page.dart';
@@ -10,6 +11,14 @@ class LecturerHome extends StatefulWidget {
   final String name;
   final String email;
   const LecturerHome({super.key, required this.name, required this.email});
+=======
+import 'profile_page.dart';
+import 'manage_attendance/session_dashboard_page.dart';
+
+class LecturerHome extends StatefulWidget {
+  final String name;
+  const LecturerHome({super.key, required this.name});
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
 
   @override
   State<LecturerHome> createState() => _LecturerHomeState();
@@ -190,16 +199,24 @@ class _LecturerHomeState extends State<LecturerHome> {
                       Navigator.push(context, MaterialPageRoute(
                           builder: (_) => const SessionDashboardPage()));
                     }),
+<<<<<<< HEAD
                     _menuCard(Icons.people, 'My\nStudents', const Color(0xFF00796B), () {
   Navigator.push(context, MaterialPageRoute(builder: (_) => MyStudentsPage(lecturerEmail: widget.email)));
 }),
+=======
+                    _menuCard(Icons.people, 'My\nStudents', const Color(0xFF00796B)),
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
                     _menuCard(Icons.bar_chart, 'Attendance\nReport', const Color(0xFF0288D1), () {
                       Navigator.push(context, MaterialPageRoute(
                           builder: (_) => const SessionDashboardPage()));
                     }),
+<<<<<<< HEAD
                     _menuCard(Icons.book, 'My\nSubjects', const Color(0xFF558B2F), () {
   Navigator.push(context, MaterialPageRoute(builder: (_) => MySubjectsPage(lecturerEmail: widget.email)));
 }),
+=======
+                    _menuCard(Icons.book, 'My\nSubjects', const Color(0xFF558B2F)),
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
                     _menuCard(Icons.person, 'My\nProfile', const Color(0xFF5E35B1), () {
                       Navigator.push(
                         context,

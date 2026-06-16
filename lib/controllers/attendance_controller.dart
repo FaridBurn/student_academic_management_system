@@ -194,4 +194,8 @@ class AttendanceController extends ChangeNotifier {
     checkInState = CheckInState.idle;
     notifyListeners();
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55

@@ -19,6 +19,7 @@ class Student {
     required this.stu_blocked,
   });
 
+<<<<<<< HEAD
 factory Student.fromJson(Map<String, dynamic> json) {
   // Handle both 'studentID' and 'studentid'
   final id = json['studentID'] ?? json['studentid'];
@@ -33,6 +34,23 @@ factory Student.fromJson(Map<String, dynamic> json) {
     stu_blocked: json['stu_blocked'] ?? false,
   );
 }
+=======
+  factory Student.fromJson(Map<String, dynamic> json) {
+    // Handle both 'studentID' and 'studentid' (Supabase returns lowercase)
+    final id = json['studentID'] ?? json['studentid'];
+
+    return Student(
+      studentID: id is int ? id : int.tryParse(id.toString()) ?? 0,
+      stu_name: json['stu_name'],
+      stu_email: json['stu_email'],
+      stu_password: json['stu_password'],
+      stu_number: json['stu_number'],
+      stu_programme: json['stu_programme'],
+      stu_batch: json['stu_batch'],
+      stu_blocked: json['stu_blocked'] ?? false,
+    );
+  }
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
 
   Map<String, dynamic> toJson() {
     return {

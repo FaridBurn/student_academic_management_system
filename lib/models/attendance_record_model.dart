@@ -38,4 +38,8 @@ class AttendanceRecordModel {
       'is_verified': isVerified,
     };
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55

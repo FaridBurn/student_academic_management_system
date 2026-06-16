@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'user_dashboard.dart';
+<<<<<<< HEAD
 import '../controllers/registration_controller.dart';
 import '../models/student.dart';
 import 'package:provider/provider.dart';
+=======
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -132,6 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final role = profile['role'] as String;
       final name = profile['name'] as String;
 
+<<<<<<< HEAD
       // If the logged-in user is a student, fetch the full student record
 if (role == 'student') {
   final studentData = await supabase
@@ -161,6 +165,8 @@ Navigator.pushReplacement(
     builder: (_) => HomeScreen(role: role, name: name, email: email),
   ),
 );
+=======
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
       // Debug prints to help diagnose
       print('Role from DB: "$role"');
       print('Selected role: "$_selectedRole"');
@@ -179,7 +185,11 @@ Navigator.pushReplacement(
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
+<<<<<<< HEAD
           builder: (_) => HomeScreen(role: role, name: name, email: email),
+=======
+          builder: (_) => HomeScreen(role: role, name: name),
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
         ),
       );
 

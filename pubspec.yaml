@@ -43,6 +43,7 @@ dependencies:
   http: ^1.2.2
   geolocator: ^13.0.2
   permission_handler: ^11.3.1
+<<<<<<< HEAD
   open_filex: ^4.5.0          # for opening downloaded files
   path_provider: ^2.1.5       # for file paths
   excel: ^4.0.6               # for generating Excel reports
@@ -50,6 +51,14 @@ dependencies:
   printing: ^5.13.0           # for printing PDFs
   web: ^1.1.0                 # for web file download (you have file_download_web.dart)
   shared_preferences: ^2.3.3  # for storing user session (login persistence)
+=======
+  pdf: ^3.10.8
+  printing: ^5.13.1
+  excel: ^4.0.6
+  path_provider: ^2.1.4
+  open_filex: ^4.7.0
+  web: ^1.1.0
+>>>>>>> 51f7658097679a1ca70072b0812edc867825ee55
 
 dev_dependencies:
   flutter_test:
