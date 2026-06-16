@@ -81,7 +81,7 @@ class AttendanceService {
         })
         .select()
         .single();
-    return data as Map<String, dynamic>;
+    return data;
   }
 
   static Future<List<Map<String, dynamic>>> getLecturerSessions(

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../user_dashboard.dart';
+import '../../controllers/registration_controller.dart';
+import '../../models/student.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -129,6 +132,35 @@ class _LoginScreenState extends State<LoginScreen> {
       final role = profile['role'] as String;
       final name = profile['name'] as String;
 
+      // If the logged-in user is a student, fetch the full student record
+if (role == 'student') {
+  final studentData = await supabase
+      .from('students')
+      .select()
+      .eq('stu_email', email)
+      .maybeSingle();
+
+  if (studentData == null) {
+    setState(() => _errorMessage = 'Student record not found. Contact admin.');
+    await supabase.auth.signOut();
+    return;
+  }
+
+  final student = Student.fromJson(studentData);
+  final registrationController = context.read<RegistrationController>();
+  registrationController.setCurrentStudent(student);
+}
+
+// Then save credentials and navigate
+await _saveCredentials(email, password, role);
+
+if (!mounted) return;
+Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(
+    builder: (_) => HomeScreen(role: role, name: name, email: email),
+  ),
+);
       // Debug prints to help diagnose
       print('Role from DB: "$role"');
       print('Selected role: "$_selectedRole"');
@@ -147,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => HomeScreen(role: role, name: name),
+          builder: (_) => HomeScreen(role: role, name: name, email: email),
         ),
       );
 
