@@ -140,7 +140,7 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
                     ? const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF6A1B9A))))
                     : (_profileImageUrl != null
                         ? Image.network(_profileImageUrl!, width: 55, height: 55, fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(Icons.person, size: 30, color: Color(0xFF6A1B9A)))
+                            errorBuilder: (_, _, _) => const Icon(Icons.person, size: 30, color: Color(0xFF6A1B9A)))
                         : const Icon(Icons.person, size: 30, color: Color(0xFF6A1B9A))),
               ),
             ),

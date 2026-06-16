@@ -48,14 +48,17 @@ class _AllStudentsPageState extends State<AllStudentsPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Delete Student'),
+        title: const Text('Delete Student', style: TextStyle(fontWeight: FontWeight.bold)),
         content: const Text('This will also delete registrations. Continue?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+          ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -64,9 +67,13 @@ class _AllStudentsPageState extends State<AllStudentsPage> {
     try {
       await Supabase.instance.client.from('students').delete().eq('studentid', id);
       _fetch();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Student deleted'), backgroundColor: Colors.green));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Student deleted'), backgroundColor: Colors.green)
+      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red)
+      );
     }
   }
 
@@ -78,26 +85,61 @@ class _AllStudentsPageState extends State<AllStudentsPage> {
     final passCtrl = TextEditingController(text: student?['stu_password'] ?? '');
     final progCtrl = TextEditingController(text: student?['stu_programme'] ?? '');
     final batchCtrl = TextEditingController(text: student?['stu_batch'] ?? '');
+    
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(isEdit ? 'Edit Student' : 'Add Student', style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          isEdit ? 'Edit Student' : 'Add Student', 
+          style: const TextStyle(fontWeight: FontWeight.bold)
+        ),
         content: SingleChildScrollView(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(controller: idCtrl, decoration: const InputDecoration(labelText: 'Student ID'), keyboardType: TextInputType.number),
-              TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Name')),
-              TextField(controller: emailCtrl, decoration: const InputDecoration(labelText: 'Email')),
-              TextField(controller: passCtrl, decoration: const InputDecoration(labelText: 'Password')),
-              TextField(controller: progCtrl, decoration: const InputDecoration(labelText: 'Programme')),
-              TextField(controller: batchCtrl, decoration: const InputDecoration(labelText: 'Batch')),
+              const SizedBox(height: 8),
+              TextField(
+                controller: idCtrl, 
+                decoration: const InputDecoration(labelText: 'Student ID', border: OutlineInputBorder()), 
+                keyboardType: TextInputType.number
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: nameCtrl, 
+                decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder())
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: emailCtrl, 
+                decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder())
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: passCtrl, 
+                decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
+                obscureText: true,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: progCtrl, 
+                decoration: const InputDecoration(labelText: 'Programme', border: OutlineInputBorder())
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: batchCtrl, 
+                decoration: const InputDecoration(labelText: 'Batch', border: OutlineInputBorder())
+              ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx), 
+            child: const Text('Cancel', style: TextStyle(color: Colors.grey))
+          ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
             onPressed: () async {
               final data = {
                 'studentid': int.parse(idCtrl.text),
@@ -115,12 +157,19 @@ class _AllStudentsPageState extends State<AllStudentsPage> {
                 }
                 Navigator.pop(ctx);
                 _fetch();
-                ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(isEdit ? 'Student updated' : 'Student added'), backgroundColor: Colors.green));
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(
+                    content: Text(isEdit ? 'Student updated' : 'Student added'), 
+                    backgroundColor: Colors.green
+                  )
+                );
               } catch (e) {
-                ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red)
+                );
               }
             },
-            child: Text(isEdit ? 'Update' : 'Add'),
+            child: Text(isEdit ? 'Update' : 'Add', style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -129,103 +178,132 @@ class _AllStudentsPageState extends State<AllStudentsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: TextField(
-              controller: _searchCtrl,
-              decoration: InputDecoration(
-                hintText: 'Search by name or email',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                filled: true,
-                fillColor: Colors.white,
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F7),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddEdit(),
+        backgroundColor: const Color(0xFF673AB7),
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Styled Search Area
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                controller: _searchCtrl,
+                decoration: InputDecoration(
+                  hintText: 'Search by name or email',
+                  prefixIcon: const Icon(Icons.search, color: Color(0xFF3F51B5)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: _loading
-                ? const Center(child: CircularProgressIndicator())
-                : _filtered.isEmpty
-                    ? const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.people_outline, size: 80, color: Colors.grey),
-                            SizedBox(height: 16),
-                            Text('No students found', style: TextStyle(fontSize: 18, color: Colors.grey)),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(12),
-                        itemCount: _filtered.length,
-                        itemBuilder: (_, i) {
-                          final s = _filtered[i];
-                          return Card(
-                            elevation: 4,
-                            margin: const EdgeInsets.only(bottom: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                gradient: const LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [Color(0xFFE0F7FA), Color(0xFFB2EBF2)],
+            // Dynamic State List Display
+            Expanded(
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _filtered.isEmpty
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.people_outline, size: 64, color: Colors.grey),
+                              SizedBox(height: 12),
+                              Text('No students found', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: _filtered.length,
+                          itemBuilder: (_, i) {
+                            final s = _filtered[i];
+                            return Card(
+                              elevation: 2,
+                              margin: const EdgeInsets.only(bottom: 12),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [Color(0xFFE0F7FA), Color(0xFFB2EBF2)],
+                                  ),
                                 ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundColor: Colors.teal.shade100,
-                                      radius: 28,
-                                      child: Text(s['stu_name'][0], style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Colors.teal.shade700,
+                                        radius: 24,
+                                        child: Text(
+                                          (s['stu_name'] != null && s['stu_name'].isNotEmpty)
+                                              ? s['stu_name'][0].toString().toUpperCase()
+                                              : '?',
+                                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 14),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              s['stu_name'] ?? '', 
+                                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87)
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              s['stu_email'] ?? '', 
+                                              style: const TextStyle(fontSize: 12, color: Colors.black54)
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                  decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.circular(8)),
+                                                  child: Text(s['stu_programme'] ?? 'N/A', style: const TextStyle(fontSize: 11)),
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                  decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.circular(8)),
+                                                  child: Text('Batch: ${s['stu_batch'] ?? 'N/A'}', style: const TextStyle(fontSize: 11)),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Row(
                                         children: [
-                                          Text(s['stu_name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                          const SizedBox(height: 4),
-                                          Text(s['stu_email'], style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                                          const SizedBox(height: 4),
-                                          Row(
-                                            children: [
-                                              Chip(label: Text(s['stu_programme'] ?? 'N/A'), backgroundColor: Colors.teal.shade50),
-                                              const SizedBox(width: 8),
-                                              Chip(label: Text('Batch: ${s['stu_batch'] ?? 'N/A'}'), backgroundColor: Colors.teal.shade50),
-                                            ],
+                                          IconButton(
+                                            icon: const Icon(Icons.edit, color: Colors.blue),
+                                            onPressed: () => _showAddEdit(student: s),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete, color: Colors.redAccent),
+                                            onPressed: () => _delete(s['studentid']),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.edit, color: Colors.blue),
-                                          onPressed: () => _showAddEdit(student: s),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete, color: Colors.red),
-                                          onPressed: () => _delete(s['studentid']),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-          ),
-        ],
+                            );
+                          },
+                        ),
+            ),
+          ],
+        ),
       ),
     );
   }

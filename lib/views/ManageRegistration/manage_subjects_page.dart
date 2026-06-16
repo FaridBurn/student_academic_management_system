@@ -35,14 +35,17 @@ class _ManageSubjectsPageState extends State<ManageSubjectsPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Delete Subject'),
+        title: const Text('Delete Subject', style: TextStyle(fontWeight: FontWeight.bold)),
         content: const Text('This will also delete registrations for this subject. Continue?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false), 
+            child: const Text('Cancel', style: TextStyle(color: Colors.grey))
+          ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -51,9 +54,25 @@ class _ManageSubjectsPageState extends State<ManageSubjectsPage> {
     try {
       await Supabase.instance.client.from('subjects').delete().eq('subjectid', id);
       _fetch();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subject deleted'), backgroundColor: Colors.green));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Subject deleted successfully'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'), 
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
     }
   }
 
@@ -64,25 +83,57 @@ class _ManageSubjectsPageState extends State<ManageSubjectsPage> {
     final nameCtrl = TextEditingController(text: subject?['sub_name'] ?? '');
     final creditCtrl = TextEditingController(text: subject?['credit_hours']?.toString() ?? '');
     final semCtrl = TextEditingController(text: subject?['sub_semester'] ?? '');
+    
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(isEdit ? 'Edit Subject' : 'Add Subject', style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          isEdit ? 'Edit Subject' : 'Add Subject', 
+          style: const TextStyle(fontWeight: FontWeight.bold)
+        ),
         content: SingleChildScrollView(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(controller: idCtrl, decoration: const InputDecoration(labelText: 'Subject ID'), keyboardType: TextInputType.number),
-              TextField(controller: codeCtrl, decoration: const InputDecoration(labelText: 'Code')),
-              TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Name')),
-              TextField(controller: creditCtrl, decoration: const InputDecoration(labelText: 'Credit Hours'), keyboardType: TextInputType.number),
-              TextField(controller: semCtrl, decoration: const InputDecoration(labelText: 'Semester')),
+              const SizedBox(height: 8),
+              TextField(
+                controller: idCtrl, 
+                enabled: !isEdit,
+                decoration: const InputDecoration(labelText: 'Subject ID', border: OutlineInputBorder()), 
+                keyboardType: TextInputType.number
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: codeCtrl, 
+                decoration: const InputDecoration(labelText: 'Code', border: OutlineInputBorder())
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: nameCtrl, 
+                decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder())
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: creditCtrl, 
+                decoration: const InputDecoration(labelText: 'Credit Hours', border: OutlineInputBorder()), 
+                keyboardType: TextInputType.number
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: semCtrl, 
+                decoration: const InputDecoration(labelText: 'Semester', border: OutlineInputBorder())
+              ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx), 
+            child: const Text('Cancel', style: TextStyle(color: Colors.grey))
+          ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
             onPressed: () async {
               final data = {
                 'subjectid': int.parse(idCtrl.text),
@@ -99,12 +150,26 @@ class _ManageSubjectsPageState extends State<ManageSubjectsPage> {
                 }
                 Navigator.pop(ctx);
                 _fetch();
-                ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(isEdit ? 'Subject updated' : 'Subject added'), backgroundColor: Colors.green));
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(
+                    content: Text(isEdit ? 'Subject updated' : 'Subject added'), 
+                    backgroundColor: Colors.green,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  )
+                );
               } catch (e) {
-                ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: $e'), 
+                    backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  )
+                );
               }
             },
-            child: Text(isEdit ? 'Update' : 'Add'),
+            child: Text(isEdit ? 'Update' : 'Add', style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -113,94 +178,117 @@ class _ManageSubjectsPageState extends State<ManageSubjectsPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator());
-    if (_subjects.isEmpty) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.book, size: 80, color: Colors.grey),
-            SizedBox(height: 16),
-            Text('No subjects found', style: TextStyle(fontSize: 18, color: Colors.grey)),
-          ],
-        ),
-      );
-    }
-    return Material(
-      child: ListView.builder(
-        padding: const EdgeInsets.all(12),
-        itemCount: _subjects.length,
-        itemBuilder: (_, i) {
-          final s = _subjects[i];
-          return Card(
-            elevation: 4,
-            margin: const EdgeInsets.only(bottom: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFFE8EAF6), Color(0xFFC5CAE9)],
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F7),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddEdit(),
+        backgroundColor: const Color(0xFF673AB7),
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      body: SafeArea(
+        child: _loading
+            ? const Center(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.deepPurple.shade100,
-                          child: Text(s['sub_code'][0], style: const TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('${s['sub_code']} - ${s['sub_name']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Chip(
-                                    label: Text('${s['credit_hours']} credits'),
-                                    backgroundColor: Colors.deepPurple.shade50,
-                                    labelStyle: const TextStyle(fontSize: 12),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Chip(
-                                    label: Text(s['sub_semester']),
-                                    backgroundColor: Colors.deepPurple.shade50,
-                                    labelStyle: const TextStyle(fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () => _showAddEdit(subject: s),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _delete(s['subjectid']),
-                            ),
-                          ],
-                        ),
-                      ],
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF673AB7)),
                     ),
+                    SizedBox(height: 16),
+                    Text('Loading subject lists...', style: TextStyle(color: Colors.grey)),
                   ],
                 ),
-              ),
-            ),
-          );
-        },
+              )
+            : _subjects.isEmpty
+                ? const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.book_outlined, size: 64, color: Colors.grey),
+                        SizedBox(height: 12),
+                        Text('No subjects found', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 80),
+                    itemCount: _subjects.length,
+                    itemBuilder: (_, i) {
+                      final s = _subjects[i];
+                      return Card(
+                        elevation: 2,
+                        margin: const EdgeInsets.only(bottom: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFFE0F7FA), Color(0xFFB2EBF2)],
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(14),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.teal.shade700,
+                                  radius: 24,
+                                  child: Text(
+                                    (s['sub_code'] != null && s['sub_code'].isNotEmpty)
+                                        ? s['sub_code'][0].toString().toUpperCase()
+                                        : '?',
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ),
+                                ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${s['sub_code'] ?? ''} - ${s['sub_name'] ?? ''}', 
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87)
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.circular(8)),
+                                            child: Text('${s['credit_hours'] ?? 0} Credits', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.circular(8)),
+                                            child: Text(s['sub_semester'] ?? 'N/A', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit, color: Colors.blue),
+                                      onPressed: () => _showAddEdit(subject: s),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete, color: Colors.redAccent),
+                                      onPressed: () => _delete(s['subjectid']),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
       ),
     );
   }

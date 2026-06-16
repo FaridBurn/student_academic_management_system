@@ -37,11 +37,28 @@ class _ReportsPageState extends State<ReportsPage> {
       await _exportCSV('students', List<Map<String, dynamic>>.from(data),
           ['Student ID', 'Name', 'Email', 'Programme', 'Batch'],
           ['studentid', 'stu_name', 'stu_email', 'stu_programme', 'stu_batch']);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Student report downloaded'), backgroundColor: Colors.green));
+      
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Student report downloaded successfully'), 
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error student database export: $e'), 
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
     } finally {
-      setState(() => _loadingStudents = false);
+      if (mounted) setState(() => _loadingStudents = false);
     }
   }
 
@@ -54,11 +71,28 @@ class _ReportsPageState extends State<ReportsPage> {
       await _exportCSV('registrations', List<Map<String, dynamic>>.from(data),
           ['Reg ID', 'Student ID', 'Subject ID', 'Semester', 'Academic Year', 'Status', 'Registered At'],
           ['registrationid', 'studentid', 'subjectid', 'semester', 'academic_year', 'status', 'registered_at']);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Registration report downloaded'), backgroundColor: Colors.green));
+      
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Registration report downloaded successfully'), 
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error registration data export: $e'), 
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
     } finally {
-      setState(() => _loadingRegistrations = false);
+      if (mounted) setState(() => _loadingRegistrations = false);
     }
   }
 
@@ -71,11 +105,28 @@ class _ReportsPageState extends State<ReportsPage> {
       await _exportCSV('fees', List<Map<String, dynamic>>.from(data),
           ['Fee ID', 'Student ID', 'Semester', 'Academic Year', 'Total Fee', 'Due Date', 'Status', 'Paid Amount'],
           ['fee_id', 'student_id', 'semester', 'academic_year', 'total_fee', 'due_date', 'status', 'paid_amount']);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fee report downloaded'), backgroundColor: Colors.green));
+      
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Financial ledger report downloaded successfully'), 
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error fee history export: $e'), 
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
     } finally {
-      setState(() => _loadingFees = false);
+      if (mounted) setState(() => _loadingFees = false);
     }
   }
 
@@ -88,57 +139,80 @@ class _ReportsPageState extends State<ReportsPage> {
       await _exportCSV('subjects', List<Map<String, dynamic>>.from(data),
           ['Subject ID', 'Code', 'Name', 'Credit Hours', 'Semester'],
           ['subjectid', 'sub_code', 'sub_name', 'credit_hours', 'sub_semester']);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subject report downloaded'), backgroundColor: Colors.green));
+      
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Curriculum subject report downloaded'), 
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error course listing export: $e'), 
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
     } finally {
-      setState(() => _loadingSubjects = false);
+      if (mounted) setState(() => _loadingSubjects = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          const Text('Generate Reports', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          const Text('Export data as CSV files', style: TextStyle(color: Colors.grey)),
-          const SizedBox(height: 24),
-          _buildReportCard(
-            icon: Icons.people,
-            title: 'Student Report',
-            subtitle: 'Export all students with ID, name, email, programme, batch',
-            color: Colors.blue,
-            onPressed: _generateStudentReport,
-            loading: _loadingStudents,
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F7),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Generate Reports', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black87)),
+              const SizedBox(height: 4),
+              const Text('Export live structural data tables as portable CSV documents', style: TextStyle(color: Colors.black54, fontSize: 13)),
+              const SizedBox(height: 24),
+              _buildReportCard(
+                icon: Icons.people_outline,
+                title: 'Student Report',
+                subtitle: 'Export student master files containing active profile parameters, email values, and registered batches.',
+                color: const Color(0xFF1976D2),
+                onPressed: _generateStudentReport,
+                loading: _loadingStudents,
+              ),
+              _buildReportCard(
+                icon: Icons.assignment_outlined,
+                title: 'Registration Report',
+                subtitle: 'Download course confirmation structures containing current validation codes, dates, and subject profiles.',
+                color: const Color(0xFFE65100),
+                onPressed: _generateRegistrationReport,
+                loading: _loadingRegistrations,
+              ),
+              _buildReportCard(
+                icon: Icons.account_balance_wallet_outlined,
+                title: 'Fee Report',
+                subtitle: 'Generate standard financial reports reflecting total outstanding bills, complete parameters, and clear invoice tracking.',
+                color: const Color(0xFF2E7D32),
+                onPressed: _generateFeeReport,
+                loading: _loadingFees,
+              ),
+              _buildReportCard(
+                icon: Icons.book_outlined,
+                title: 'Subject Report',
+                subtitle: 'Compile curriculum configuration indexes containing full course catalog details and expected core values.',
+                color: const Color(0xFF673AB7),
+                onPressed: _generateSubjectReport,
+                loading: _loadingSubjects,
+              ),
+            ],
           ),
-          _buildReportCard(
-            icon: Icons.assignment,
-            title: 'Registration Report',
-            subtitle: 'Export all registrations with status, semester, student and subject IDs',
-            color: Colors.orange,
-            onPressed: _generateRegistrationReport,
-            loading: _loadingRegistrations,
-          ),
-          _buildReportCard(
-            icon: Icons.attach_money,
-            title: 'Fee Report',
-            subtitle: 'Export tuition fee records with amount, due date, payment status',
-            color: Colors.green,
-            onPressed: _generateFeeReport,
-            loading: _loadingFees,
-          ),
-          _buildReportCard(
-            icon: Icons.book,
-            title: 'Subject Report',
-            subtitle: 'Export all subjects with code, name, credit hours, semester',
-            color: Colors.purple,
-            onPressed: _generateSubjectReport,
-            loading: _loadingSubjects,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -152,48 +226,59 @@ class _ReportsPageState extends State<ReportsPage> {
     required bool loading,
   }) {
     return Card(
-      elevation: 4,
+      elevation: 1,
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [color.withOpacity(0.1), color.withOpacity(0.05)],
+            colors: [color.withOpacity(0.08), color.withOpacity(0.02)],
           ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Icon(icon, size: 32, color: color),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, size: 26, color: color),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
+                  ),
+                ],
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
-                    Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                  ],
+              const SizedBox(height: 12),
+              Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.black, height: 1.4)),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: loading ? null : onPressed,
+                  icon: loading
+                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
+                      : const Icon(Icons.download_rounded, size: 18),
+                  label: Text(loading ? 'Generating Document...' : 'Export CSV File', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: color,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: color.withOpacity(0.4),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
                 ),
-              ),
-              ElevatedButton.icon(
-                onPressed: loading ? null : onPressed,
-                icon: loading
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.download),
-                label: Text(loading ? 'Exporting...' : 'Export CSV'),
-                style: ElevatedButton.styleFrom(backgroundColor: color),
               ),
             ],
           ),
