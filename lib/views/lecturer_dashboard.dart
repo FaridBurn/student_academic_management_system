@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'login_page.dart';
+import 'ManageRegistration/login_page.dart';
+import 'ManageAttendance/session_dashboard_page.dart';
 import 'profile_page.dart';
-import 'manage_attendance/session_dashboard_page.dart';
+import 'my_students_page.dart';
+import 'my_subjects_page.dart';
 
 class LecturerHome extends StatefulWidget {
   final String name;
-  const LecturerHome({super.key, required this.name});
+  final String email;
+  const LecturerHome({super.key, required this.name, required this.email});
 
   @override
   State<LecturerHome> createState() => _LecturerHomeState();
@@ -187,12 +190,16 @@ class _LecturerHomeState extends State<LecturerHome> {
                       Navigator.push(context, MaterialPageRoute(
                           builder: (_) => const SessionDashboardPage()));
                     }),
-                    _menuCard(Icons.people, 'My\nStudents', const Color(0xFF00796B)),
+                    _menuCard(Icons.people, 'My\nStudents', const Color(0xFF00796B), () {
+  Navigator.push(context, MaterialPageRoute(builder: (_) => MyStudentsPage(lecturerEmail: widget.email)));
+}),
                     _menuCard(Icons.bar_chart, 'Attendance\nReport', const Color(0xFF0288D1), () {
                       Navigator.push(context, MaterialPageRoute(
                           builder: (_) => const SessionDashboardPage()));
                     }),
-                    _menuCard(Icons.book, 'My\nSubjects', const Color(0xFF558B2F)),
+                    _menuCard(Icons.book, 'My\nSubjects', const Color(0xFF558B2F), () {
+  Navigator.push(context, MaterialPageRoute(builder: (_) => MySubjectsPage(lecturerEmail: widget.email)));
+}),
                     _menuCard(Icons.person, 'My\nProfile', const Color(0xFF5E35B1), () {
                       Navigator.push(
                         context,

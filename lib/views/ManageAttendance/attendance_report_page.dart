@@ -155,7 +155,7 @@ class _AttendanceReportPageState extends State<AttendanceReportPage> {
         children: [
           pw.SizedBox(
             width: 60,
-            child: pw.Text('$label',
+            child: pw.Text(label,
                 style: pw.TextStyle(fontWeight: pw.FontWeight.bold,
                     fontSize: 11, color: PdfColors.blueGrey700)),
           ),

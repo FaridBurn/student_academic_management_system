@@ -3,10 +3,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_page.dart';
 import 'subject_list_page.dart';
 import 'timetable_view_page.dart';
-import 'profile_page.dart';
-import 'manage_curriculum_activities/available_activities.dart';
-import 'manage_attendance/student_check_in_page.dart';
-import 'manage_tuition_fees/tuitionfee_dashboard_page.dart';
+import '../profile_page.dart';
+import '../ManageCurriculumActivities/available_activities_page.dart';
+import '../ManageAttendance/student_check_in_page.dart';
+import '../ManageTuitionFees/tuitionfee_dashboard_page.dart';
 
 class StudentHome extends StatefulWidget {
   final String name;

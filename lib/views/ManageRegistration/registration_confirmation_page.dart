@@ -9,7 +9,23 @@ class RegistrationConfirmationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.read<RegistrationController>();
+    final student = context.watch<RegistrationController>().currentStudent;
+if (student == null) {
+  return Scaffold(
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('Please login first'),
+          ElevatedButton(
+            onPressed: () => Navigator.pushReplacementNamed(context, '/'),
+            child: const Text('Go to Login'),
+          ),
+        ],
+      ),
+    ),
+  );
+}
     final currentSemester = 'Sem1';
     const currentAcademicYear = '2025/2026';
 
@@ -153,30 +169,34 @@ class RegistrationConfirmationPage extends StatelessWidget {
                     const SizedBox(width: 16),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () async {
-                          final success = await controller.submitRegistration(
-                            currentSemester,
-                            currentAcademicYear,
-                          );
-                          
-                          if (!context.mounted) return;
-                          
-                          if (success) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (_) => const RegistrationSuccessPage()),
-                            );
-                          } else {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const RegistrationErrorPage(
-                                  errorMessage: 'Registration failed. Please try again.',
-                                ),
-                              ),
-                            );
-                          }
-                        },
+onPressed: () async {
+  print('Submit button clicked');
+  final success = await controller.submitRegistration(
+    currentSemester,
+    currentAcademicYear,
+  );
+  print('Registration success: $success');
+  
+  if (!context.mounted) return;
+  
+  if (success) {
+    print('Navigating to success page');
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const RegistrationSuccessPage()),
+    );
+  } else {
+    print('Navigating to error page');
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const RegistrationErrorPage(
+          errorMessage: 'Registration failed. Please try again.',
+        ),
+      ),
+    );
+  }
+},
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           backgroundColor: Colors.green,

@@ -66,6 +66,11 @@ class RegistrationController extends ChangeNotifier {
     }
   }
 
+  void setCurrentStudent(Student student) {
+      _currentStudent = student;
+    notifyListeners();
+  }
+
   // FETCH ALL SUBJECTS
   Future<void> fetchSubjects() async {
     _isLoading = true;
@@ -133,59 +138,66 @@ class RegistrationController extends ChangeNotifier {
   }
 
   // SUBMIT REGISTRATION
-  Future<bool> submitRegistration(String semester, String academicYear) async {
-    if (_currentStudent == null || _cartItems.isEmpty) return false;
-    
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      for (var subject in _cartItems) {
-        await _supabase.from('registrations').insert({
-          'studentID': _currentStudent!.studentID,
-          'subjectID': subject.subjectID,
-          'semester': semester,
-          'academic_year': academicYear,
-          'status': 'Pending',
-          'registered_at': DateTime.now().toIso8601String(),
-        });
-      }
-      
-      _cartItems.clear();
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      debugPrint('Error submitting registration: $e');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
+Future<bool> submitRegistration(String semester, String academicYear) async {
+  print('submitRegistration called. Student: ${_currentStudent?.studentID}, Cart items: ${_cartItems.length}');
+  if (_currentStudent == null || _cartItems.isEmpty) {
+    print('No student or cart empty');
+    return false;
   }
+
+  _isLoading = true;
+  notifyListeners();
+
+  try {
+    for (var subject in _cartItems) {
+      print('Inserting subject: ${subject.subjectID}');
+      await _supabase.from('registrations').insert({
+        'studentid': _currentStudent!.studentID,
+        'subjectid': subject.subjectID,
+        'semester': semester,
+        'academic_year': academicYear,
+        'status': 'Pending',
+        'registered_at': DateTime.now().toIso8601String(),
+      });
+      print('Insert successful for subject ${subject.subjectID}');
+    }
+
+    _cartItems.clear();
+    _isLoading = false;
+    notifyListeners();
+    print('Registration successful, returning true');
+    return true;
+  } catch (e) {
+    print('Error in submitRegistration: $e');
+    _isLoading = false;
+    notifyListeners();
+    return false;
+  }
+}
 
   // FETCH TIMETABLE
-  Future<List<Map<String, dynamic>>> fetchTimetable(String semester, String academicYear) async {
-    if (_currentStudent == null) return [];
-    
-    try {
-      final response = await _supabase
-          .from('registrations')
-          .select('''
-            registrationID,
-            status,
-            subjects:subjectID (subjectID, sub_code, sub_name, credit_hours)
-          ''')
-          .eq('studentID', _currentStudent!.studentID)
-          .eq('semester', semester)
-          .eq('academic_year', academicYear)
-          .eq('status', 'Approved');
-      
-      return response;
-    } catch (e) {
-      debugPrint('Error fetching timetable: $e');
-      return [];
-    }
+Future<List<Map<String, dynamic>>> fetchTimetable(String semester, String academicYear) async {
+  if (_currentStudent == null) return [];
+
+  try {
+    final response = await _supabase
+        .from('registrations')
+        .select('''
+          registrationid,
+          status,
+          subjects:subjectid (subjectid, sub_code, sub_name, credit_hours)
+        ''')
+        .eq('studentid', _currentStudent!.studentID)
+        .eq('semester', semester)
+        .eq('academic_year', academicYear)
+        .eq('status', 'Approved');
+
+    return response;
+  } catch (e) {
+    debugPrint('Error fetching timetable: $e');
+    return [];
   }
+}
   
   // LOGOUT
   void logout() {

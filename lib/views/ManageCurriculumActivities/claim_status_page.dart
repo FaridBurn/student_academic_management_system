@@ -116,7 +116,7 @@ class _ClaimStatusScreenState extends State<ClaimStatusScreen> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -141,7 +141,7 @@ class _ClaimStatusScreenState extends State<ClaimStatusScreen> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _statusColor(status).withOpacity(0.12),
+                    color: _statusColor(status).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(

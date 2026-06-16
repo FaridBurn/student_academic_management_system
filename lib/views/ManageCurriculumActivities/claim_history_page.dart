@@ -159,7 +159,7 @@ class _ClaimHistoryScreenState extends State<ClaimHistoryScreen> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -169,7 +169,7 @@ class _ClaimHistoryScreenState extends State<ClaimHistoryScreen> {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         leading: CircleAvatar(
-          backgroundColor: _statusColor(status).withOpacity(0.12),
+          backgroundColor: _statusColor(status).withValues(alpha: 0.12),
           child: Icon(
             status == 'approved'
                 ? Icons.check
@@ -201,7 +201,7 @@ class _ClaimHistoryScreenState extends State<ClaimHistoryScreen> {
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: _statusColor(status).withOpacity(0.12),
+            color: _statusColor(status).withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(

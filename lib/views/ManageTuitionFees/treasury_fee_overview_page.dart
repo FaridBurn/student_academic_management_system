@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../services/supabase_fee_service.dart';
-import '../manage_tuition_fees/add_fee_record_page.dart';
+import 'add_fee_record_page.dart';
 
 class TreasuryFeeOverviewPage extends StatefulWidget {
   const TreasuryFeeOverviewPage({super.key});
